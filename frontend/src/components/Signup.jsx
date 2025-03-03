@@ -1,47 +1,131 @@
-import React, { useState } from "react";
-import { motion } from 'framer-motion';
-import { Link } from 'react-router-dom';
-import { UserPlus, Mail, Lock, User, Eye, EyeOff, CheckCircle, AlertCircle } from 'lucide-react';
+import React, { useState, useCallback } from "react";
+import { motion } from "framer-motion";
+import { Link } from "react-router-dom";
+import {
+  UserPlus,
+  Mail,
+  Lock,
+  User,
+  Eye,
+  EyeOff,
+  CheckCircle,
+  AlertCircle,
+  Facebook,
+} from "lucide-react";
+import { FcGoogle } from "react-icons/fc";
+import validator from "validator";
+
+const InputField = ({
+  icon,
+  type,
+  value,
+  onChange,
+  placeholder,
+  id,
+  required,
+}) => (
+  <div className="relative">
+    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+      {icon}
+    </div>
+    <input
+      type={type}
+      value={value}
+      onChange={(e) => onChange(e)}
+      className="w-full pl-10 pr-4 py-3 rounded-lg border focus:ring-2 focus:ring-green-500 focus:border-green-500 font-normal"
+      name={id}
+      placeholder={placeholder}
+      required={required}
+    />
+  </div>
+);
 
 function Signup() {
-
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [agreeTerms, setAgreeTerms] = useState(false);
   const [passwordStrength, setPasswordStrength] = useState(0);
+  const [emailError, setEmailError] = useState("");
 
-  const handlePasswordChange = (e) => {
+  const PASSWORD_STRENGTH_LABELS = [
+    "Weak",
+    "Fair",
+    "Good",
+    "Strong",
+    "Very Strong",
+  ];
+  const PASSWORD_STRENGTH_COLORS = [
+    "red",
+    "orange",
+    "yellow",
+    "green",
+    "emerald",
+  ];
+
+  const PasswordStrengthIndicator = ({ strength }) => (
+    <div className="mt-2">
+      <div className="flex items-center justify-between mb-1">
+        <span className="text-xs font-medium">Password strength:</span>
+        <span className="text-xs font-medium">
+          {PASSWORD_STRENGTH_LABELS[strength]}
+        </span>
+      </div>
+      <div className="h-1 w-full bg-gray-200 rounded-full overflow-hidden">
+        <div
+          className={`h-full bg-${PASSWORD_STRENGTH_COLORS[strength]}-500`}
+          style={{ width: `${(strength / 4) * 100}%` }}
+        />
+      </div>
+    </div>
+  );
+
+  const handlePasswordChange = useCallback((e) => {
     const newPassword = e.target.value;
     setPassword(newPassword);
 
-    // Calculate password strength
     let strength = 0;
-    if(newPassword.length > 8) {
-        strength += 1;
-    }
-    
-    if(/[A-Z]/.test(newPassword)) {
-        strength += 1;
-    }
-    
-    if(/[0-9]/.test(newPassword)) {
-        strength += 1;
-    }
-
-    if(/[^A-Za-z0-9]/.test(newPassword)) {
-        strength += 1;
-    }
+    if (newPassword.length > 8) strength += 1;
+    if (/[A-Z]/.test(newPassword)) strength += 1;
+    if (/[0-9]/.test(newPassword)) strength += 1;
+    if (/[^A-Za-z0-9]/.test(newPassword)) strength += 1;
 
     setPasswordStrength(strength);
-  };
+  }, []);
+
+  const handleEmailChange = useCallback((e) => {
+    const newEmail = e.target.value;
+    setEmail(newEmail);
+    setEmailError(validator.isEmail(newEmail) ? "" : "Invalid email address");
+  }, []);
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    // Handle signup logic here
+    if (!validator.isEmail(email)) {
+      setEmailError("Invalid email address");
+      return;
+    }
     console.log("Signup attempt with:", { name, email, password });
   };
+
+  const handleGoogleSignup = async () => {
+    alert("Google signup clicked! (Implement Firebase signup here)");
+  };
+
+  const handleFacebookSignup = async () => {
+    alert("Facebook signup clicked! (Implement Firebase signup here)");
+  };
+
+  const SocialSignupButton = ({ icon, label, onClick, color }) => (
+    <button
+      onClick={onClick}
+      className={`flex items-center justify-center w-1/2 py-3 px-4 border font-normal rounded-lg text-gray-700 bg-white hover:bg-gray-100 shadow-sm`}
+    >
+      {icon}
+      <span className="ml-2">{label}</span>
+    </button>
+  );
 
   return (
     <div className="min-h-screen pt-20 flex items-center justify-center">
@@ -59,44 +143,38 @@ function Signup() {
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-6">
+
             <div>
               <label className="block text-sm font-medium mb-2" htmlFor="name">
                 Full Name
               </label>
-              <div className="relative">
-                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <User size={18} className="text-gray-400" />
-                </div>
-                <input
-                  id="name"
-                  type="text"
-                  value={name}
-                  onChange={(e) => setName(e.target.value)}
-                  className="w-full pl-10 pr-4 py-3 rounded-lg border focus:ring-2 focus:ring-green-500 focus:border-green-500 font-normal"
-                  placeholder="John Doe"
-                  required
-                />
-              </div>
+              <InputField
+                icon={<User size={18} className="text-gray-400" />}
+                type="text"
+                value={name}
+                onChange={(e) => setName(e.target.value)} // Ensure onChange is passed correctly
+                placeholder="John Doe"
+                id="name"
+                required
+              />
             </div>
 
             <div>
               <label className="block text-sm font-medium mb-2" htmlFor="email">
                 Email Address
               </label>
-              <div className="relative">
-                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <Mail size={18} className="text-gray-400" />
-                </div>
-                <input
-                  id="email"
-                  type="email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  className="w-full pl-10 pr-4 py-3 rounded-lg border focus:ring-2 focus:ring-green-500 focus:border-green-500 font-normal"
-                  placeholder="you@example.com"
-                  required
-                />
-              </div>
+              <InputField
+                icon={<Mail size={18} className="text-gray-400" />}
+                type="email"
+                value={email}
+                onChange={handleEmailChange}
+                placeholder="you@example.com"
+                id="email"
+                required
+              />
+              {emailError && (
+                <p className="text-red-500 text-xs mt-1">{emailError}</p>
+              )}
             </div>
 
             <div>
@@ -107,16 +185,13 @@ function Signup() {
                 Password
               </label>
               <div className="relative">
-                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <Lock size={18} className="text-gray-400" />
-                </div>
-                <input
-                  id="password"
+                <InputField
+                  icon={<Lock size={18} className="text-gray-400" />}
                   type={showPassword ? "text" : "password"}
                   value={password}
                   onChange={handlePasswordChange}
-                  className="w-full pl-10 pr-12 py-3 rounded-lg border focus:ring-2 focus:ring-green-500 focus:border-green-500 font-normal"
                   placeholder="••••••••"
+                  id="password"
                   required
                 />
                 <div className="absolute inset-y-0 right-0 pr-3 flex items-center">
@@ -130,39 +205,10 @@ function Signup() {
                 </div>
               </div>
 
-              {/* Password strength indicator */}
               {password && (
-                <div className="mt-2">
-                  <div className="flex items-center justify-between mb-1">
-                    <span className="text-xs font-medium">Password strength:</span>
-                    <span className="text-xs font-medium">
-                      {passwordStrength === 0 && "Weak"}
-                      {passwordStrength === 1 && "Fair"}
-                      {passwordStrength === 2 && "Good"}
-                      {passwordStrength === 3 && "Strong"}
-                      {passwordStrength === 4 && "Very Strong"}
-                    </span>
-                  </div>
-                  <div className="h-1 w-full bg-gray-200 rounded-full overflow-hidden">
-                    <div
-                      className={`h-full ${
-                        passwordStrength === 0
-                          ? "bg-red-500"
-                          : passwordStrength === 1
-                          ? "bg-orange-500"
-                          : passwordStrength === 2
-                          ? "bg-yellow-500"
-                          : passwordStrength === 3
-                          ? "bg-green-500"
-                          : "bg-emerald-500"
-                      }`}
-                      style={{ width: `${(passwordStrength / 4) * 100}%` }}
-                    />
-                  </div>
-                </div>
+                <PasswordStrengthIndicator strength={passwordStrength} />
               )}
 
-              {/* Password requirements */}
               {password && (
                 <div className="mt-3 space-y-2">
                   <div className="flex items-center text-xs font-medium">
@@ -199,6 +245,31 @@ function Signup() {
                   </div>
                 </div>
               )}
+            </div>
+
+            {/* Social Signup Buttons */}
+            <div className="relative my-6"> {/* Divider */}
+              <div className="absolute inset-0 flex items-center">
+                <div className="w-full border-t border-gray-300"></div>
+              </div>
+              <div className="relative flex justify-center text-sm">
+                <span className="bg-white px-4 font-normal text-gray-500">
+                  or continue with
+                </span>
+              </div>
+            </div>
+
+            <div className="flex justify-center space-x-3">
+              <SocialSignupButton
+                icon={<FcGoogle size={20} className="mr-2" />}
+                label="Google"
+                onClick={handleGoogleSignup}
+              />
+              <SocialSignupButton
+                icon={<Facebook size={20} className="mr-2 text-blue-600" />}
+                label="Facebook"
+                onClick={handleFacebookSignup}
+              />
             </div>
 
             <div className="flex items-center">
