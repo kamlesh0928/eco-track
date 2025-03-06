@@ -3,6 +3,8 @@ import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
 import { Mail, CheckCircle } from "lucide-react";
 import validator from "validator";
+import { auth } from "../services/firebase";
+import { sendPasswordResetEmail } from "firebase/auth";
 
 function ForgotPassword() {
   const [email, setEmail] = useState("");
@@ -18,14 +20,44 @@ function ForgotPassword() {
     [setEmail, setEmailError]
   );
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
+
+    // Validate email
     if (!validator.isEmail(email)) {
       setEmailError("Invalid email address");
       return;
     }
-    setIsSubmitted(true);
-    console.log("Password reset requested for:", email);
+
+    try {
+      setIsSubmitted(true);
+      await sendPasswordResetEmail(auth, email);
+      console.log("Password reset email sent to:", email);
+
+      toast.success("Password reset email sent successfully!", {
+        position: "top-center",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: false,
+        progress: undefined,
+      });
+    } catch (error) {
+      console.error("Error sending password reset email:", error.message);
+
+      toast.error(error.message, {
+        position: "top-center",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: false,
+        progress: undefined,
+      });
+
+      setIsSubmitted(false);
+    }
   };
 
   return (

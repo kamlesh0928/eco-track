@@ -11,9 +11,15 @@ import {
   CheckCircle,
   AlertCircle,
   Facebook,
+  Loader,
 } from "lucide-react";
 import { FcGoogle } from "react-icons/fc";
 import validator from "validator";
+import { createUserWithEmailAndPassword } from "firebase/auth";
+import { auth, db } from "../services/firebase";
+import { setDoc, doc } from "firebase/firestore";
+import handleGoogleAuth from "../services/handleGoogleAuth";
+import { toast } from "react-toastify";
 
 const InputField = ({
   icon,
@@ -23,6 +29,9 @@ const InputField = ({
   placeholder,
   id,
   required,
+  showPasswordToggle,
+  onTogglePassword,
+  error,
 }) => (
   <div className="relative">
     <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
@@ -31,23 +40,41 @@ const InputField = ({
     <input
       type={type}
       value={value}
-      onChange={(e) => onChange(e)}
-      className="w-full pl-10 pr-4 py-3 rounded-lg border focus:ring-2 focus:ring-green-500 focus:border-green-500 font-normal"
+      onChange={onChange}
+      className={`w-full pl-10 pr-4 py-3 rounded-lg border focus:ring-2 focus:ring-green-500 focus:border-green-500 font-normal ${
+        error ? "border-red-500" : "border-gray-300"
+      }`}
       name={id}
       placeholder={placeholder}
       required={required}
     />
+    {showPasswordToggle && (
+      <div className="absolute inset-y-0 right-0 pr-3 flex items-center">
+        <button
+          type="button"
+          onClick={onTogglePassword}
+          className="text-gray-400 hover:text-gray-500 focus:outline-none"
+        >
+          {type === "password" ? <EyeOff size={18} /> : <Eye size={18} />}
+        </button>
+      </div>
+    )}
+    {error && <p className="text-red-500 text-xs mt-1">{error}</p>}
   </div>
 );
 
-function Signup() {
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [showPassword, setShowPassword] = useState(false);
-  const [agreeTerms, setAgreeTerms] = useState(false);
-  const [passwordStrength, setPasswordStrength] = useState(0);
-  const [emailError, setEmailError] = useState("");
+// Password Strength Indicator Component
+const PasswordStrengthIndicator = ({ password }) => {
+  const hasLowercase = /[a-z]/.test(password);
+  const hasUppercase = /[A-Z]/.test(password);
+  const hasNumber = /[0-9]/.test(password);
+  const hasSpecialChar = /[^A-Za-z0-9]/.test(password);
+
+  const strength =
+    (hasLowercase ? 1 : 0) +
+    (hasUppercase ? 1 : 0) +
+    (hasNumber ? 1 : 0) +
+    (hasSpecialChar ? 1 : 0);
 
   const PASSWORD_STRENGTH_LABELS = [
     "Weak",
@@ -64,7 +91,7 @@ function Signup() {
     "emerald",
   ];
 
-  const PasswordStrengthIndicator = ({ strength }) => (
+  return (
     <div className="mt-2">
       <div className="flex items-center justify-between mb-1">
         <span className="text-xs font-medium">Password strength:</span>
@@ -78,20 +105,62 @@ function Signup() {
           style={{ width: `${(strength / 4) * 100}%` }}
         />
       </div>
+      <div className="mt-2 space-y-1">
+        <div className="flex items-center text-xs">
+          {hasLowercase ? (
+            <CheckCircle size={12} className="text-green-500 mr-1" />
+          ) : (
+            <AlertCircle size={12} className="text-red-500 mr-1" />
+          )}
+          <span>At least one lowercase letter</span>
+        </div>
+        <div className="flex items-center text-xs">
+          {hasUppercase ? (
+            <CheckCircle size={12} className="text-green-500 mr-1" />
+          ) : (
+            <AlertCircle size={12} className="text-red-500 mr-1" />
+          )}
+          <span>At least one uppercase letter</span>
+        </div>
+        <div className="flex items-center text-xs">
+          {hasNumber ? (
+            <CheckCircle size={12} className="text-green-500 mr-1" />
+          ) : (
+            <AlertCircle size={12} className="text-red-500 mr-1" />
+          )}
+          <span>At least one number</span>
+        </div>
+        <div className="flex items-center text-xs">
+          {hasSpecialChar ? (
+            <CheckCircle size={12} className="text-green-500 mr-1" />
+          ) : (
+            <AlertCircle size={12} className="text-red-500 mr-1" />
+          )}
+          <span>At least one special character</span>
+        </div>
+      </div>
     </div>
   );
+};
+
+function Signup() {
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [agreeTerms, setAgreeTerms] = useState(false);
+  const [emailError, setEmailError] = useState("");
+  const [nameError, setNameError] = useState("");
+  const [passwordError, setPasswordError] = useState("");
+  const [confirmPasswordError, setConfirmPasswordError] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
 
   const handlePasswordChange = useCallback((e) => {
     const newPassword = e.target.value;
     setPassword(newPassword);
-
-    let strength = 0;
-    if (newPassword.length > 8) strength += 1;
-    if (/[A-Z]/.test(newPassword)) strength += 1;
-    if (/[0-9]/.test(newPassword)) strength += 1;
-    if (/[^A-Za-z0-9]/.test(newPassword)) strength += 1;
-
-    setPasswordStrength(strength);
+    setPasswordError("");
   }, []);
 
   const handleEmailChange = useCallback((e) => {
@@ -100,32 +169,113 @@ function Signup() {
     setEmailError(validator.isEmail(newEmail) ? "" : "Invalid email address");
   }, []);
 
-  const handleSubmit = (e) => {
+  const handleNameChange = useCallback((e) => {
+    const newName = e.target.value;
+    setName(newName);
+    setNameError(newName.trim() ? "" : "Name is required");
+  }, []);
+
+  const handleConfirmPasswordChange = useCallback(
+    (e) => {
+      const newConfirmPassword = e.target.value;
+      setConfirmPassword(newConfirmPassword);
+      setConfirmPasswordError(
+        newConfirmPassword === password ? "" : "Passwords do not match"
+      );
+    },
+    [password]
+  );
+
+  const validatePassword = () => {
+    const hasLowercase = /[a-z]/.test(password);
+    const hasUppercase = /[A-Z]/.test(password);
+    const hasNumber = /[0-9]/.test(password);
+    const hasSpecialChar = /[^A-Za-z0-9]/.test(password);
+
+    if (
+      !hasLowercase ||
+      !hasUppercase ||
+      !hasNumber ||
+      !hasSpecialChar ||
+      password.length < 8
+    ) {
+      setPasswordError(
+        "Password must contain at least one lowercase letter, one uppercase letter, one number, one special character, and be at least 8 characters long."
+      );
+      return false;
+    }
+    return true;
+  };
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
+
+    // Validate all fields
+    if (!name.trim()) {
+      setNameError("Name is required");
+      return;
+    }
     if (!validator.isEmail(email)) {
       setEmailError("Invalid email address");
       return;
     }
-    console.log("Signup attempt with:", { name, email, password });
-  };
+    if (!validatePassword()) {
+      return;
+    }
+    if (password !== confirmPassword) {
+      setConfirmPasswordError("Passwords do not match");
+      return;
+    }
+    if (!agreeTerms) {
+      toast.error("You must agree to the terms and conditions");
+      return;
+    }
 
-  const handleGoogleSignup = async () => {
-    alert("Google signup clicked! (Implement Firebase signup here)");
-  };
+    setIsLoading(true);
 
-  const handleFacebookSignup = async () => {
-    alert("Facebook signup clicked! (Implement Firebase signup here)");
-  };
+    try {
+      const userCredential = await createUserWithEmailAndPassword(
+        auth,
+        email,
+        password
+      );
+      const user = userCredential.user;
 
-  const SocialSignupButton = ({ icon, label, onClick, color }) => (
-    <button
-      onClick={onClick}
-      className={`flex items-center justify-center w-1/2 py-3 px-4 border font-normal rounded-lg text-gray-700 bg-white hover:bg-gray-100 shadow-sm`}
-    >
-      {icon}
-      <span className="ml-2">{label}</span>
-    </button>
-  );
+      if (user) {
+        await setDoc(doc(db, "users", user.uid), {
+          name: name,
+          email: email,
+          createdAt: new Date(),
+        });
+      }
+
+      toast.success("Account created successfully!", {
+        position: "top-center",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: false,
+        progress: undefined,
+      });
+
+      // Redirect to home page or login page
+      window.location.href = "/home";
+    } catch (error) {
+      console.error(error.message);
+      toast.error(error.message, {
+        position: "top-center",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: false,
+        progress: undefined,
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   return (
     <div className="min-h-screen pt-20 flex items-center justify-center">
@@ -143,7 +293,7 @@ function Signup() {
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-6">
-
+            {/* Name Field */}
             <div>
               <label className="block text-sm font-medium mb-2" htmlFor="name">
                 Full Name
@@ -152,13 +302,15 @@ function Signup() {
                 icon={<User size={18} className="text-gray-400" />}
                 type="text"
                 value={name}
-                onChange={(e) => setName(e.target.value)} // Ensure onChange is passed correctly
+                onChange={handleNameChange}
                 placeholder="John Doe"
                 id="name"
                 required
+                error={nameError}
               />
             </div>
 
+            {/* Email Field */}
             <div>
               <label className="block text-sm font-medium mb-2" htmlFor="email">
                 Email Address
@@ -171,12 +323,11 @@ function Signup() {
                 placeholder="you@example.com"
                 id="email"
                 required
+                error={emailError}
               />
-              {emailError && (
-                <p className="text-red-500 text-xs mt-1">{emailError}</p>
-              )}
             </div>
 
+            {/* Password Field */}
             <div>
               <label
                 className="block text-sm font-medium mb-2"
@@ -184,94 +335,46 @@ function Signup() {
               >
                 Password
               </label>
-              <div className="relative">
-                <InputField
-                  icon={<Lock size={18} className="text-gray-400" />}
-                  type={showPassword ? "text" : "password"}
-                  value={password}
-                  onChange={handlePasswordChange}
-                  placeholder="••••••••"
-                  id="password"
-                  required
-                />
-                <div className="absolute inset-y-0 right-0 pr-3 flex items-center">
-                  <button
-                    type="button"
-                    onClick={() => setShowPassword(!showPassword)}
-                    className="text-gray-400 hover:text-gray-500 focus:outline-none"
-                  >
-                    {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
-                  </button>
-                </div>
-              </div>
-
-              {password && (
-                <PasswordStrengthIndicator strength={passwordStrength} />
-              )}
-
-              {password && (
-                <div className="mt-3 space-y-2">
-                  <div className="flex items-center text-xs font-medium">
-                    {password.length > 8 ? (
-                      <CheckCircle size={14} className="text-green-500 mr-2" />
-                    ) : (
-                      <AlertCircle size={14} className="text-red-500 mr-2" />
-                    )}
-                    <span>At least 8 characters</span>
-                  </div>
-                  <div className="flex items-center text-xs font-medium">
-                    {/[A-Z]/.test(password) ? (
-                      <CheckCircle size={14} className="text-green-500 mr-2" />
-                    ) : (
-                      <AlertCircle size={14} className="text-red-500 mr-2" />
-                    )}
-                    <span>At least one uppercase letter</span>
-                  </div>
-                  <div className="flex items-center text-xs font-medium">
-                    {/[0-9]/.test(password) ? (
-                      <CheckCircle size={14} className="text-green-500 mr-2" />
-                    ) : (
-                      <AlertCircle size={14} className="text-red-500 mr-2" />
-                    )}
-                    <span>At least one number</span>
-                  </div>
-                  <div className="flex items-center text-xs font-medium">
-                    {/[^A-Za-z0-9]/.test(password) ? (
-                      <CheckCircle size={14} className="text-green-500 mr-2" />
-                    ) : (
-                      <AlertCircle size={14} className="text-red-500 mr-2" />
-                    )}
-                    <span>At least one special character</span>
-                  </div>
-                </div>
-              )}
-            </div>
-
-            {/* Social Signup Buttons */}
-            <div className="relative my-6"> {/* Divider */}
-              <div className="absolute inset-0 flex items-center">
-                <div className="w-full border-t border-gray-300"></div>
-              </div>
-              <div className="relative flex justify-center text-sm">
-                <span className="bg-white px-4 font-normal text-gray-500">
-                  or continue with
-                </span>
-              </div>
-            </div>
-
-            <div className="flex justify-center space-x-3">
-              <SocialSignupButton
-                icon={<FcGoogle size={20} className="mr-2" />}
-                label="Google"
-                onClick={handleGoogleSignup}
+              <InputField
+                icon={<Lock size={18} className="text-gray-400" />}
+                type={showPassword ? "text" : "password"}
+                value={password}
+                onChange={handlePasswordChange}
+                placeholder="••••••••"
+                id="password"
+                required
+                showPasswordToggle
+                onTogglePassword={() => setShowPassword(!showPassword)}
+                error={passwordError}
               />
-              <SocialSignupButton
-                icon={<Facebook size={20} className="mr-2 text-blue-600" />}
-                label="Facebook"
-                onClick={handleFacebookSignup}
+              {password && <PasswordStrengthIndicator password={password} />}
+            </div>
+
+            {/* Confirm Password Field */}
+            <div>
+              <label
+                className="block text-sm font-medium mb-2"
+                htmlFor="confirmPassword"
+              >
+                Confirm Password
+              </label>
+              <InputField
+                icon={<Lock size={18} className="text-gray-400" />}
+                type={showConfirmPassword ? "text" : "password"}
+                value={confirmPassword}
+                onChange={handleConfirmPasswordChange}
+                placeholder="••••••••"
+                id="confirmPassword"
+                required
+                showPasswordToggle
+                onTogglePassword={() =>
+                  setShowConfirmPassword(!showConfirmPassword)
+                }
+                error={confirmPasswordError}
               />
             </div>
 
+            {/* Terms and Conditions */}
             <div className="flex items-center">
               <input
                 id="terms"
@@ -293,24 +396,60 @@ function Signup() {
               </label>
             </div>
 
+            {/* Submit Button */}
             <motion.button
               type="submit"
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
-              disabled={!agreeTerms || passwordStrength < 2}
+              disabled={
+                isLoading ||
+                !agreeTerms ||
+                passwordError ||
+                confirmPasswordError
+              }
               className={`w-full flex justify-center items-center font-medium py-3 px-4 border border-transparent rounded-lg shadow-sm text-white 
                 ${
-                  !agreeTerms || passwordStrength < 2
+                  isLoading ||
+                  !agreeTerms ||
+                  passwordError ||
+                  confirmPasswordError
                     ? "bg-gray-400 cursor-not-allowed"
                     : "bg-green-500 hover:bg-green-600"
                 } 
                 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500`}
             >
-              <UserPlus size={18} className="mr-2" />
-              Create Account
+              {isLoading ? (
+                <Loader size={18} className="animate-spin mr-2" />
+              ) : (
+                <UserPlus size={18} className="mr-2" />
+              )}
+              {isLoading ? "Creating Account..." : "Create Account"}
             </motion.button>
           </form>
 
+          {/* Social Signup Buttons */}
+          <div className="relative my-6">
+            <div className="absolute inset-0 flex items-center">
+              <div className="w-full border-t border-gray-300"></div>
+            </div>
+            <div className="relative flex justify-center text-sm">
+              <span className="bg-white px-4 font-normal text-gray-500">
+                or continue with
+              </span>
+            </div>
+          </div>
+
+          <div className="flex justify-center space-x-3">
+            <button
+              onClick={handleGoogleAuth}
+              className="flex items-center justify-center w-1/2 py-3 px-4 border font-normal rounded-lg text-gray-700 bg-white hover:bg-gray-100 shadow-sm"
+            >
+              <FcGoogle size={20} className="mr-2" />
+              Google
+            </button>
+          </div>
+
+          {/* Login Link */}
           <div className="mt-8 pt-6 border-t border-gray-200">
             <p className="text-sm text-center font-medium">
               Already have an account?{" "}

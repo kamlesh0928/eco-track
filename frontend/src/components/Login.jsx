@@ -1,11 +1,24 @@
 import React, { useState, useCallback } from "react";
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
-import { Mail, Lock, Eye, EyeOff, LogIn, Facebook } from "lucide-react";
+import { Mail, Lock, Eye, EyeOff, LogIn, Facebook, Loader } from "lucide-react";
 import { FcGoogle } from "react-icons/fc";
 import validator from "validator";
+import { auth } from "../services/firebase";
+import { signInWithEmailAndPassword } from "firebase/auth";
+import { toast } from "react-toastify";
+import handleGoogleAuth from "../services/handleGoogleAuth";
 
-const InputField = ({ icon, type, value, onChange, placeholder, required }) => (
+const InputField = ({
+  icon,
+  type,
+  value,
+  onChange,
+  placeholder,
+  required,
+  showPasswordToggle,
+  onTogglePassword,
+}) => (
   <div className="relative">
     <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
       {icon}
@@ -18,6 +31,17 @@ const InputField = ({ icon, type, value, onChange, placeholder, required }) => (
       placeholder={placeholder}
       required={required}
     />
+    {showPasswordToggle && (
+      <div className="absolute inset-y-0 right-0 pr-3 flex items-center">
+        <button
+          type="button"
+          onClick={onTogglePassword}
+          className="text-gray-400 hover:text-gray-500 focus:outline-none"
+        >
+          {type === "password" ? <EyeOff size={18} /> : <Eye size={18} />}
+        </button>
+      </div>
+    )}
   </div>
 );
 
@@ -26,16 +50,8 @@ function Login() {
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [emailError, setEmailError] = useState("");
-
-  const SocialLoginButton = ({ icon, label, onClick, color }) => (
-    <button
-      onClick={onClick}
-      className={`flex items-center justify-center w-1/2 py-3 px-4 border font-normal rounded-lg text-gray-700 bg-white hover:bg-gray-100 shadow-sm`}
-    >
-      {icon}
-      <span className="ml-2">{label}</span>
-    </button>
-  );
+  const [passwordError, setPasswordError] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleEmailChange = useCallback((e) => {
     const newEmail = e.target.value;
@@ -43,22 +59,73 @@ function Login() {
     setEmailError(validator.isEmail(newEmail) ? "" : "Invalid email address");
   }, []);
 
-  const handleSubmit = (e) => {
+  const handlePasswordChange = useCallback((e) => {
+    const newPassword = e.target.value;
+    setPassword(newPassword);
+    setPasswordError(newPassword.trim() ? "" : "Password is required");
+  }, []);
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
+
+    // Validate fields
     if (!validator.isEmail(email)) {
       setEmailError("Invalid email address");
       return;
     }
-    console.log("Login attempt with:", { email, password });
+    if (!password.trim()) {
+      setPasswordError("Password is required");
+      return;
+    }
+
+    setIsLoading(true);
+
+    try {
+      const userCredential = await signInWithEmailAndPassword(
+        auth,
+        email,
+        password
+      );
+      const user = userCredential.user;
+      console.log("User Logged In:", user);
+
+      // Redirect to home page
+      window.location.href = "/home";
+
+      toast.success("User logged in successfully", {
+        position: "top-center",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: false,
+        progress: undefined,
+      });
+    } catch (error) {
+      console.log(error.message);
+      toast.error(error.message, {
+        position: "top-center",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: false,
+        progress: undefined,
+      });
+    } finally {
+      setIsLoading(false);
+    }
   };
 
-  const handleGoogleLogin = async () => {
-    alert("Google login clicked! (Implement Firebase login here)");
-  };
-
-  const handleFacebookLogin = async () => {
-    alert("Facebook login clicked! (Implement Firebase login here)");
-  };
+  const SocialLoginButton = ({ icon, label, onClick }) => (
+    <button
+      onClick={onClick}
+      className="flex items-center justify-center w-1/2 py-3 px-4 border font-normal rounded-lg text-gray-700 bg-white hover:bg-gray-100 shadow-sm"
+    >
+      {icon}
+      <span className="ml-2">{label}</span>
+    </button>
+  );
 
   return (
     <div className="min-h-screen pt-20 flex items-center justify-center">
@@ -77,6 +144,7 @@ function Login() {
 
           {/* Login Form */}
           <form onSubmit={handleSubmit} className="space-y-6">
+            {/* Email Field */}
             <div>
               <label className="block text-sm font-medium mb-2" htmlFor="email">
                 Email Address
@@ -94,6 +162,7 @@ function Login() {
               )}
             </div>
 
+            {/* Password Field */}
             <div>
               <label
                 className="block text-sm font-medium mb-2"
@@ -101,27 +170,22 @@ function Login() {
               >
                 Password
               </label>
-              <div className="relative">
-                <InputField
-                  icon={<Lock size={18} className="text-gray-400" />}
-                  type={showPassword ? "text" : "password"}
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  placeholder="••••••••"
-                  required
-                />
-                <div className="absolute inset-y-0 right-0 pr-3 flex items-center">
-                  <button
-                    type="button"
-                    onClick={() => setShowPassword(!showPassword)}
-                    className="text-gray-400 hover:text-gray-500 focus:outline-none"
-                  >
-                    {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
-                  </button>
-                </div>
-              </div>
+              <InputField
+                icon={<Lock size={18} className="text-gray-400" />}
+                type={showPassword ? "text" : "password"}
+                value={password}
+                onChange={handlePasswordChange}
+                placeholder="••••••••"
+                required
+                showPasswordToggle
+                onTogglePassword={() => setShowPassword(!showPassword)}
+              />
+              {passwordError && (
+                <p className="text-red-500 text-xs mt-1">{passwordError}</p>
+              )}
             </div>
 
+            {/* Forgot Password Link */}
             <div className="flex items-center justify-start">
               <Link
                 to="/forgot-password"
@@ -131,14 +195,20 @@ function Login() {
               </Link>
             </div>
 
+            {/* Submit Button */}
             <motion.button
               type="submit"
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
+              disabled={isLoading}
               className="w-full flex justify-center items-center py-3 px-4 border border-transparent rounded-lg font-normal shadow-sm text-white bg-green-500 hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500"
             >
-              <LogIn size={18} className="mr-2" />
-              Login
+              {isLoading ? (
+                <Loader size={18} className="animate-spin mr-2" />
+              ) : (
+                <LogIn size={18} className="mr-2" />
+              )}
+              {isLoading ? "Logging In..." : "Login"}
             </motion.button>
           </form>
 
@@ -154,19 +224,16 @@ function Login() {
             </div>
           </div>
 
+          {/* Social Login Button */}
           <div className="flex justify-center space-x-3">
             <SocialLoginButton
               icon={<FcGoogle size={20} className="mr-2" />}
               label="Google"
-              onClick={handleGoogleLogin}
-            />
-            <SocialLoginButton
-              icon={<Facebook size={20} className="mr-2 text-blue-600" />}
-              label="Facebook"
-              onClick={handleFacebookLogin}
+              onClick={handleGoogleAuth}
             />
           </div>
 
+          {/* Signup Link */}
           <div className="mt-8 pt-6 border-t border-gray-200 font-normal">
             <p className="text-sm text-center">
               Don't have an account?{" "}
