@@ -23,6 +23,17 @@ const handleGoogleAuth = async () => {
         photoURL: user.photoURL,
         createdAt: new Date(),
       });
+
+      window.location.href = "/location";
+    } else {
+      
+      const userData = userDoc.data();
+
+      if (userData.location) {  // Check if location data exists
+        window.location.href = "/home";      // Location data exists, redirect to "/home"
+      } else {
+        window.location.href = "/location";  // Location data doesn't exist, redirect to "/location"
+      }
     }
 
     toast.success("Logged in with Google successfully", {
@@ -34,8 +45,6 @@ const handleGoogleAuth = async () => {
       draggable: false,
       progress: undefined,
     });
-
-    window.location.href = "/home";
   } catch (error) {
     console.error("Google Auth Error:", error.message);
     toast.error(error.message, {
