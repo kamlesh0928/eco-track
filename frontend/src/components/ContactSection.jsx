@@ -1,6 +1,6 @@
 import React from 'react';
 import { motion } from 'framer-motion'; 
-import { Button } from "@/components/ui/button";
+import { Button } from "./ui/button";
 
 const fadeInUp = {
     initial: { opacity: 0, y: 20 },

@@ -23,7 +23,7 @@ import {
 } from "react-icons/wi";
 
 import { auth, db } from "../services/firebase";
-import { fetchWeatherData } from "@/services/api";
+import { fetchWeatherData } from "../services/api";
 import { doc, getDoc } from "firebase/firestore";
 
 // Animation Variants

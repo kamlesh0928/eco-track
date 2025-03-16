@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import {
   User,
@@ -9,11 +9,12 @@ import {
   Leaf,
   Sun,
   Moon,
-  LogOut,
   Award,
   Clock,
 } from "lucide-react";
 import { useTheme } from "next-themes";
+import { db, auth } from "../services/firebase";
+import { doc, getDoc } from "firebase/firestore";
 
 // Animation Variants
 const fadeInUp = {
@@ -34,11 +35,9 @@ const staggerChildren = {
 
 const UserDashboard = () => {
   const { theme, setTheme } = useTheme();
-
-  // Mock user data
-  const user = {
-    name: "John Doe",
-    email: "john.doe@example.com",
+  const [user, setUser] = useState({
+    name: "Loading...", // Default name while fetching
+    email: "Loading...",
     footprint: {
       travel: 19.2, // kg CO₂
       energy: 25.0,
@@ -63,7 +62,38 @@ const UserDashboard = () => {
       food: ["Reduce meat consumption.", "Buy locally sourced produce."],
       shopping: ["Opt for second-hand items.", "Choose sustainable brands."],
     },
-  };
+  });
+
+  // Fetch user data from Firestore using auth.currentUser
+  useEffect(() => {
+    const fetchUserData = async () => {
+      try {
+        const currentUser = auth.currentUser; // Get the currently logged-in user
+        if (currentUser) {
+          const userId = currentUser.uid; // Use the UID from auth
+          const userDocRef = doc(db, "users", userId); // Reference to the Firestore document
+          const userDocSnap = await getDoc(userDocRef);
+
+          if (userDocSnap.exists()) {
+            const userData = userDocSnap.data();
+            setUser((prevUser) => ({
+              ...prevUser,
+              name: userData.name || "User", // Use the name from Firestore or a default
+              email: userData.email || currentUser.email || "No email", // Fallback to auth email
+            }));
+          } else {
+            console.log("No such document!");
+          }
+        } else {
+          console.log("No user is logged in.");
+        }
+      } catch (error) {
+        console.error("Error fetching user data:", error);
+      }
+    };
+
+    fetchUserData();
+  }, []);
 
   return (
     <div
@@ -96,7 +126,7 @@ const UserDashboard = () => {
 
         {/* Header */}
         <motion.div {...fadeInUp} className="text-center mb-12">
-          <h1 className="text-4xl md:text-5xl font-extrabold mb-4 bg-gradient-to-r from-green-400 to-blue-500 bg-clip-text text-transparent">
+          <h1 className="text-4xl md:text-5xl font-extrabold mt-4 mb-4 bg-gradient-to-r from-green-400 to-blue-500 bg-clip-text text-transparent">
             Welcome, {user.name}!
           </h1>
           <p className="text-lg text-muted-foreground dark:text-gray-300 max-w-2xl mx-auto">
@@ -104,7 +134,6 @@ const UserDashboard = () => {
             earn eco-friendly achievements.
           </p>
         </motion.div>
-
 
         {/* Carbon Footprint Overview */}
         <motion.div

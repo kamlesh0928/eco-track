@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import { Button } from "@/components/ui/button";
+import { Button } from "./ui/button";
 import { Leaf, Activity, Trophy } from "lucide-react";
 
 const HeroSection = () => {

@@ -15,7 +15,7 @@ import {
   MessageSquare,
   Settings,
 } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { Button } from "./ui/button";
 import { Link, useNavigate } from "react-router-dom";
 import useAuth from "../services/useAuth";
 
