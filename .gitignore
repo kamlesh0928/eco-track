@@ -1,5 +1,6 @@
 .vscode
 notes.txt
+.env
 
 
 # frontend
@@ -28,7 +29,6 @@ frontend/.env
 
 # backend
 backend/node_modules
-backend/.env
 
 
 # ai-engine
