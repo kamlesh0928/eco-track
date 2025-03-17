@@ -1,23 +1,14 @@
-nix
 {
-  description = "My development environment";
+  description = "A very basic flake";
 
-  inputs = {
-    nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
-  };
+  inputs.nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
 
   outputs = { self, nixpkgs }:
-    let
-      system = "x86_64-linux";
-      pkgs = nixpkgs.legacyPackages.${system};
-    in
+    let pkgs = nixpkgs.legacyPackages."x86_64-linux";
+    in 
     {
-      devShells.${system}.default = pkgs.mkShell {
-        packages = with pkgs; [
-          python311
-          python311Packages.pip
-          # Add any other packages you need here
-        ];
+      devShells.x86_64-linux.default = pkgs.mkShell {
+        packages = with pkgs; [ gcc python311 python311Packages.pip python311Packages.flask];
       };
     };
 }
