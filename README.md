@@ -1,16 +1,40 @@
-# EcoTrack - AI-Powered Carbon Footprint Tracker
+# EcoTrack
 
+**Demo Video:** [Link](http://add-video-link)
 
-## Project Overview
-EcoTrack is an advanced AI-powered platform designed to help users monitor, manage, and reduce their carbon footprint. By leveraging AI-driven insights, gamification, and blockchain technology, it provides users with personalized strategies to adopt sustainable practices. The system is built with a modular architecture comprising three main components:
+**Website Link:** [https://ecotrack-9nvl.onrender.com](https://ecotrack-9nvl.onrender.com)
 
-- **Frontend**: A React-based user interface for inputting data, tracking progress, and engaging with gamified sustainability challenges.
-- **Backend**: A Node.js and Express.js server managing user authentication, API communication, and data storage.
-- **AI Engine**: A dedicated module using the Google Gemini API to analyze user activity and provide tailored sustainability recommendations.
-- **Database**: Firebase Firestore is used to store user data, sustainability progress, and gamification points securely.
+## Table of Contents
 
+  - [Overview](#overview)
+  - [Contributors](#contributors)
+  - [Inspiration](#inspiration)
+  - [Features](#features)
+  - [Built With](#built-with)
+  - [Challenges](#challenges)
+  - [Future Plans](#future-plans)
 
-## Key Features
+## Overview
+
+EcoTrack is an AI-powered platform that helps users track and reduce their carbon footprint. The platform combines smart tracking, personalized sustainability plans, and gamification to make sustainable living engaging and rewarding. With the combination of carbon credit marketplaces, 3D Earth heatmap visualization, getting weather conditions based on user location, and community hub for like minded peers.
+
+## Contributors:
+
+1. [Sanya Gupta](https://www.linkedin.com/in/sanya-gupta-2466052a6/)
+2. [Sandeep Mehta](https://www.linkedin.com/in/sandeep-mehta-90a1212b7/)
+3. [Akash Kumar](https://www.linkedin.com/in/akash-kumar-iitp/)
+4. [Kamlesh Prajapati](https://www.linkedin.com/in/kamlesh5242/)
+
+## Inspiration
+
+The climate crisis represents one of the greatest challenges of our generation. While many individuals want to make a difference, they often lack:
+1. Tools to accurately measure their environmental impact
+2. Personalized guidance for sustainable living
+3. Visible proof that their actions matter
+
+EcoTrack was born from the belief that technology can bridge this gap by making sustainability accessible, measurable, and rewarding for everyone.
+
+## Features
 
 ### 1. Carbon Footprint Tracker
 - Allows users to input daily activities, including transportation, energy consumption, and food habits.
@@ -33,140 +57,65 @@ EcoTrack is an advanced AI-powered platform designed to help users monitor, mana
 - Real-time tracking of investments and their environmental impact.
 
 ### 5. 3D Earth Model
-- A real-time interactive 3D model of Earth displaying global climate conditions.
-- Marks locations of natural disasters and environmental risks.
-- Provides visual data on climate trends and emissions.
+- *Heatmap Visualization:* Displays eco-friendly habits adopted across different regions.
 
-### 6. Weather Updates
-- Fetches and displays weather data based on user location.
-- Provides insights into climate conditions for better decision-making.
+- *Regional Impact:* Highlights sustainability efforts and encourages positive environmental actions.
 
-### 7. Dark/Light Mode Toggle
-- Users can switch between light and dark modes.
-- Enhances accessibility and readability under different conditions.
+### 6. Community Hub
+- *Community Space:* A dedicated platform for users to share experiences, insights, and sustainable practices.
 
+- *Challenges & Activities:* Engaging group challenges to promote collaborative sustainability efforts.
 
-## Tech Stack
-- **Frontend**: React.js, Tailwind CSS, Firebase Firestore
-- **Backend**: Node.js, Express.js
-- **Database**: Firebase Firestore
-- **AI Engine**: Google Gemini API
-- **Blockchain**: Smart contracts for carbon credits
-- **3D Visualization**: Three.js / WebGL
+- *Expert Insights:* Webinars and articles from environmental specialists to educate users on reducing carbon footprints.
 
+## Built With
 
-## Installation Guide
+- *Frontend (React.js + Tailwind CSS):*
+  - Responsive user interface built with modern React components.
+  - Tailwind CSS framework for rapid UI development.
+  - Customizable design system with Tailwind's theming capabilities.
 
-### 1. Clone the Repository
-```bash
-git clone https://github.com/your-repo/ecotrack.git
-cd ecotrack
-```
+- *Backend (Node.js + Express):*
+  - RESTful API architecture for all data operations.
+  - Secure user authentication and session management.
+  - Integration with multiple external APIs (weather, carbon data).
 
-### 2. Install Dependencies
-Navigate to each directory and install dependencies.
+- *AI Engine (Google Gemini API):*
+  - Processes user activity data to generate personalized insights.
+  - Continuously improves recommendations through machine learning.
 
-#### Frontend
-```bash
-cd frontend
-npm install
-```
+- *Database (Firebase + Firestore):*
+  - Real-time updates for collaborative features.
+  - Secure storage of user information and activity history.
 
-#### Backend
-```bash
-cd ../backend
-npm install
-```
+- *Blockchain Integration:*
+  - Smart contracts for carbon credit transactions.
+  - Transparent ledger of offset investments.
 
-#### AI Engine
-```bash
-cd ../ai-engine
-pip install -r requirements.txt
-```
+## Challenges
 
-### 3. Setup Environment Variables
-The project requires environment variables for API keys and other configurations. Create the following `.env` files:
+Building EcoTrack presented several unique challenges that required innovative solutions:
 
-#### Folder Structure for .env Files
-```
-/ecotrack
-│── ai-engine
-│   ├── app.py
-│── backend
-│   ├── index.js
-│── frontend
-│   ├── .env  # Separate env file
-│   ├── src
-├── .env  # Common for ai-engine and backend
-│── .gitignore
-│── README.md
-```
+- *Data Accuracy:* 
+  - Gathering reliable emission factors for diverse activities across different regions required extensive research and validation.
 
-#### Common .env for Backend and AI Engine
-Create a single `.env` file in the root directory (`/ecotrack/.env`) to be used by both `backend` and `ai-engine`.
+- *Behavioral Engagement:*
+  - Designing gamification elements that genuinely motivate sustainable actions rather than superficial participation.
 
-```env
-DATABASE_URL=your_database_url_here
-GEMINI_API_KEY=your_api_key_here
-WEATHER_API_KEY=your_api_key_here
-BLOCKCHAIN_API_KEY=your_api_key_here
-```
+- *System Complexity:*
+  - Integrating multiple technologies (AI, blockchain, 3D visualization) while maintaining performance and usability.
 
-#### Frontend .env File
-Create a `.env` file inside the `frontend` directory.
+- *Personalization:*
+  - Creating AI recommendations that adapt to individual circumstances without being intrusive or overwhelming.
 
-```env
-FIREBASE_API_KEY=your_firebase_api_key_here
-FIREBASE_AUTH_DOMAIN=your_firebase_auth_domain_here
-FIREBASE_PROJECT_ID=your_firebase_project_id_here
-FIREBASE_STORAGE_BUCKET=your_firebase_storage_bucket_here
-FIREBASE_MESSAGING_SENDER_ID=your_firebase_messaging_sender_id_here
-FIREBASE_APP_ID=your_firebase_app_id_here
-```
+# Future Plans
 
-### 4. Firebase Firestore Setup
-1. Go to the [Firebase Console](https://console.firebase.google.com/).
-2. Create a new project and enable Firestore Database.
-3. Set up authentication methods (email/password, Google, etc.).
-4. Get the Firebase config details and add them to the `frontend/.env` file.
+We have exciting plans to expand and enhance EcoTrack's capabilities to make sustainable living even more accessible and impactful:
 
-### 5. Run the Application
-Start each module separately.
+- *Mobile Application:* Develop iOS and Android apps for on-the-go carbon tracking and real-time sustainability tips.
 
-#### Start Backend Server
-```bash
-cd backend
-nodemon index.js
-```
+- *Multi-language Support:* Add support for major languages to make the platform globally accessible.
 
-#### Start AI Engine
-```bash
-cd ../ai-engine
-python app.py
-```
+- *Rewards Marketplace:* Implement a system where users can earn discounts on eco-friendly products from partner brands.
 
-#### Start Frontend
-```bash
-cd ../frontend
-npm run dev
-```
-
-### 6. Access the Application
-Once all services are running:
-- Open the frontend in a browser at `http://localhost:<your_port>` .
-- The backend server should be running on `http://localhost:<your_port>` .
-- The AI engine processes requests in real-time.
-
-
-## Development Note
-This project is still in the development stage. Various parts of the code are currently hardcoded, meaning fixed values are used instead of fetching actual data from the backend. Additionally, several functionalities are yet to be implemented. Future updates will focus on improving dynamic data handling and completing the remaining features.
-
-
-## Contributing
-We welcome contributions! Feel free to submit issues or pull requests.
-
-## License
-This project is licensed under the MIT License.
-
----
-Empowering sustainability through AI and innovation.
+- *NGO Partnerships:* Collaborate with environmental organizations to track real-world impact of user actions.
