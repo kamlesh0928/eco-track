@@ -1,6 +1,6 @@
 # EcoTrack
 
-**Demo Video:** [Link](http://add-video-link)
+**Demo Video:** [https://www.youtube.com/watch?v=10VhaSYdGjY](https://www.youtube.com/watch?v=10VhaSYdGjY)
 
 **Website Link:** [https://ecotrack-9nvl.onrender.com](https://ecotrack-9nvl.onrender.com)
 
@@ -36,25 +36,27 @@ EcoTrack was born from the belief that technology can bridge this gap by making 
 
 ## Features
 
-### 1. Carbon Footprint Tracker
-- Allows users to input daily activities, including transportation, energy consumption, and food habits.
-- AI-based calculation of carbon footprint with category-wise breakdown.
-- Tracks historical data and trends for informed decision-making.
+### 1. Carbon Footprint Tracking & AI-Based Sustainability Plan
+- Tracks user activities such as transportation, energy use, and food habits to calculate carbon footprint.
+- Provides category wise breakdown and historical trends for better decision making.
+- AI generates personalized sustainability plans based on user behavior.
+- Suggests specific actions to reduce carbon emissions with real-time insights.
+- Enables progress tracking with data-driven analytics for continuous improvement.
 
-### 2. AI-Based Personalized Sustainability Plan
-- Generates tailored sustainability plans based on user habits.
-- AI suggests specific actions to reduce carbon emissions.
-- Progress tracking with real-time analytics and insights.
-
-### 3. Gamification & Leaderboards
+### 2. Gamification & Leaderboards
 - Users complete sustainability challenges and daily tasks.
 - Earn points, unlock achievements, and rank on leaderboards.
 - Encourages eco-friendly habits through interactive engagement.
 
-### 4. Carbon Credit & Offsetting Marketplace
+### 3. Carbon Credit & Offsetting Marketplace
 - Provides a transparent system for investing in carbon offset projects.
 - Blockchain-based verification of carbon credits.
 - Real-time tracking of investments and their environmental impact.
+
+### 4. User Activity Tracking
+- Monitors user activities such as transportation, energy consumption, and lifestyle habits.
+- Helps analyze user behavior to understand carbon footprint patterns.
+- Enables AI-driven personalized recommendations for effective sustainability improvements.
 
 ### 5. 3D Earth Model
 - **Heatmap Visualization:** Displays eco-friendly habits adopted across different regions.
@@ -119,3 +121,6 @@ We have exciting plans to expand and enhance EcoTrack's capabilities to make sus
 - **Rewards Marketplace:** Implement a system where users can earn discounts on eco-friendly products from partner brands.
 
 - **NGO Partnerships:** Collaborate with environmental organizations to track real-world impact of user actions.
+
+
+>### Due to some Git configuration errors, my teammate's contributions are not showing properly.
