@@ -21,7 +21,6 @@ const staggerChildren = {
 const About = () => {
   const { theme } = useTheme();
 
-  // Team members with profile picture paths (replace with your image imports)
   const teamMembers = [
     {
       name: "Sandeep Mehta",
