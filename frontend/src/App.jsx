@@ -1,12 +1,17 @@
 import React, { useEffect, useState } from "react";
-import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+  Navigate,
+} from "react-router-dom";
 import { ThemeProvider } from "next-themes";
 
 import Header from "./components/Header";
 import Footer from "./components/Footer";
 import ScrollToTop from "./components/ScrollToTop";
 import HeroSection from "./components/HeroSection";
-import FeaturesSection from "./components/FeaturesSection";
+import Apart from "./components/Apart";
 import SmallActionsSection from "./components/SmallActionsSection";
 import WhyEcoTrack from "./components/WhyEcoTrack";
 import ContactSection from "./components/ContactSection";
@@ -15,7 +20,6 @@ import CarbonFootprintOverview from "./components/CarbonFootprintOverview";
 
 import Login from "./pages/Login";
 import Signup from "./pages/Signup";
-import Home from "./pages/Home";
 import About from "./pages/About";
 import Contact from "./pages/Contact";
 import Leaderboard from "./pages/Leaderboard";
@@ -25,6 +29,10 @@ import LocationPage from "./pages/LocationPage";
 import CarbonFootprintCalculator from "./pages/CarbonFootprintCalculator";
 import UserDashboard from "./pages/UserDashboard";
 import ForgotPassword from "./pages/ForgotPassword";
+import ActivityTracking from "./pages/ActivityTracking";
+import GamifiedChallenges from "./pages/GamifiedChallenges";
+import CommunityHub from "./pages/CommunityHub";
+import NotFound from "./pages/NotFound";
 
 import { auth } from "./services/firebase";
 
@@ -45,7 +53,11 @@ function App() {
   }, []);
 
   if (loading) {
-    return <div>Loading...</div>;
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-gray-900"></div>
+      </div>
+    );
   }
 
   return (
@@ -62,7 +74,7 @@ function App() {
                 element={
                   <>
                     <HeroSection />
-                    <FeaturesSection />
+                    <Apart />
                     <SmallActionsSection />
                     <WhyEcoTrack />
                     <CarbonFootprintOverview />
@@ -75,28 +87,108 @@ function App() {
               <Route path="/signup" element={<Signup />} />
               <Route path="/about" element={<About />} />
               <Route path="/forgot-password" element={<ForgotPassword />} />
+              <Route path="/not-found" element={<NotFound />} />
 
               {/* Protected Routes */}
-              {user && (
-                <>
-                  <Route path="/home" element={<Home />} />
-                  <Route path="/contact" element={<Contact />} />
-                  <Route path="/leaderboard" element={<Leaderboard />} />
-                  <Route path="/features" element={<Features />} />
-                  <Route path="/how-it-works" element={<HowItWorks />} />
-                  <Route path="/location" element={<LocationPage />} />
-                  <Route path="/carbon-footprint-calculator" element={<CarbonFootprintCalculator />} />
-                  <Route path="/user-dashboard" element={<UserDashboard />} />
-                </>
-              )}
+              <Route
+                path="/home"
+                element={
+                  <PrivateRoute user={user}>
+                    <>
+                      <HeroSection />
+                      <Apart />
+                      <SmallActionsSection />
+                      <WhyEcoTrack />
+                      <CarbonFootprintOverview />
+                      <ContactSection />
+                      <FAQSection />
+                    </>
+                  </PrivateRoute>
+                }
+              />
+              <Route
+                path="/contact"
+                element={
+                  <PrivateRoute user={user}>
+                    <Contact />
+                  </PrivateRoute>
+                }
+              />
+              <Route
+                path="/leaderboard"
+                element={
+                  <PrivateRoute user={user}>
+                    <Leaderboard />
+                  </PrivateRoute>
+                }
+              />
+              <Route
+                path="/features"
+                element={
+                  <PrivateRoute user={user}>
+                    <Features />
+                  </PrivateRoute>
+                }
+              />
+              <Route
+                path="/how-it-works"
+                element={
+                  <PrivateRoute user={user}>
+                    <HowItWorks />
+                  </PrivateRoute>
+                }
+              />
+              <Route
+                path="/location"
+                element={
+                  <PrivateRoute user={user}>
+                    <LocationPage />
+                  </PrivateRoute>
+                }
+              />
+              <Route
+                path="/carbon-footprint-calculator"
+                element={
+                  <PrivateRoute user={user}>
+                    <CarbonFootprintCalculator />
+                  </PrivateRoute>
+                }
+              />
+              <Route
+                path="/activity-tracking"
+                element={
+                  <PrivateRoute user={user}>
+                    <ActivityTracking />
+                  </PrivateRoute>
+                }
+              />
+              <Route
+                path="/gamified-challenges"
+                element={
+                  <PrivateRoute user={user}>
+                    <GamifiedChallenges />
+                  </PrivateRoute>
+                }
+              />
+              <Route
+                path="/community-hub"
+                element={
+                  <PrivateRoute user={user}>
+                    <CommunityHub />
+                  </PrivateRoute>
+                }
+              />
+              <Route
+                path="/user-dashboard"
+                element={
+                  <PrivateRoute user={user}>
+                    <UserDashboard />
+                  </PrivateRoute>
+                }
+              />
 
               {/* Redirect unauthenticated users */}
-              {!user && (
-                <>
-                  {/* Redirect all other routes to login */}
-                  <Route path="*" element={<Navigate to="/login" />} />
-                </>
-              )}
+              <Route path="*" element={<Navigate to="/not-found" />} />
             </Routes>
           </main>
           <Footer />

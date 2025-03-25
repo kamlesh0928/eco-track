@@ -8,7 +8,18 @@ const weatherRoutes = require('./routes/weatherRoutes');
 
 const app = express();
 
-app.use(cors());
+const allowedOrigins = [
+    "http://localhost:5173"
+  ];
+  
+  app.use(cors({
+    origin: allowedOrigins,
+    methods: "GET,POST,OPTIONS",
+    allowedHeaders: "Content-Type,Authorization",
+    credentials: true
+  }));
+  
+  app.options("*", (req, res) => res.sendStatus(204));
 app.use(express.json());
 
 app.get('/', (req, res) => {

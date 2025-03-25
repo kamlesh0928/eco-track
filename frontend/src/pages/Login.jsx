@@ -117,7 +117,7 @@ const Login = () => {
       const user = userCredential.user;
       console.log("User Logged In:", user);
 
-      window.location.href = "/home";
+      window.location.href = "/features";
 
       toast.success("User logged in successfully", {
         position: "top-center",

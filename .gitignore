@@ -32,3 +32,5 @@ backend/node_modules
 
 
 # ai-engine
+ai-engine/__pycache__
+ai-engine/venv

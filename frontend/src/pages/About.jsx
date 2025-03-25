@@ -1,6 +1,6 @@
 import React from "react";
 import { motion } from "framer-motion";
-import { Leaf, Globe, Zap } from "lucide-react";
+import { Leaf, Users, Globe, Zap, Sprout, Droplet } from "lucide-react";
 import { useTheme } from "next-themes";
 
 // Animation Variants

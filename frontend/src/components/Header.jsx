@@ -15,7 +15,7 @@ import {
   MessageSquare,
   Settings,
 } from "lucide-react";
-import { Button } from "./ui/button";
+import { Button } from "@/components/ui/button";
 import { Link, useNavigate } from "react-router-dom";
 import useAuth from "../services/useAuth";
 
@@ -59,7 +59,7 @@ const Header = () => {
             <Link
               key={name}
               to={path}
-              className="text-gray-700 dark:text-gray-300 hover:text-green-500 transition-colors font-medium"
+              className="text-gray-700 dark:text-gray-300 hover:text-green-500 transition-colors font-medium hover:bg-gray-200 dark:hover:bg-gray-700 p-2 rounded-lg focus:outline-none focus:ring-1 focus:ring-green-300 hover:opacity-90"
             >
               {name}
             </Link>
@@ -208,28 +208,22 @@ const Header = () => {
             animate={{ x: 0 }}
             exit={{ x: "100%" }}
             transition={{ type: "spring", stiffness: 300, damping: 30 }}
-            className="fixed top-0 right-0 h-full w-64 bg-white dark:bg-gray-900 shadow-lg z-50 p-6"
+            className={`fixed top-0 right-0 h-full w-64 z-60 p-6 ${
+              theme === "dark" ? "bg-gray-800 " : "bg-white "
+            }  shadow-lg border-l border-gray-200 dark:border-gray-700`}
           >
             {/* Sidebar Header */}
-            <div className="flex items-center justify-between mb-6">
+            <div className="flex items-center justify-between ">
               <div className="flex items-center gap-3">
-                <div className="h-10 w-10 rounded-full border-2 border-green-500 flex items-center justify-center overflow-hidden">
-                  {user?.photoURL ? (
-                    <img
-                      src={user.photoURL}
-                      alt="Profile"
-                      className="h-full w-full object-cover"
-                      onError={(e) => {
-                        // Fallback to an icon if the image fails to load
-                        e.currentTarget.src = ""; // Clear the invalid src
-                        e.currentTarget.className = "hidden"; // Hide the broken image
-                      }}
-                    />
-                  ) : null}
-                  {!user?.photoURL && (
-                    <User className="h-6 w-6 text-green-500 bg-green-100 dark:bg-green-900 rounded-full p-1" />
-                  )}
-                </div>
+                {user?.photoURL ? (
+                  <img
+                    src={user.photoURL}
+                    alt="Profile"
+                    className="h-10 w-10 rounded-full border-2 border-green-500"
+                  />
+                ) : (
+                  <User className="h-10 w-10 p-2 rounded-full bg-green-100 dark:bg-green-900 text-green-500" />
+                )}
                 <span className="text-lg font-semibold text-gray-800 dark:text-gray-200">
                   {user?.displayName || user?.email?.split("@")[0] || "User"}
                 </span>
@@ -243,33 +237,37 @@ const Header = () => {
             </div>
 
             {/* Sidebar Links */}
-            <div className="flex flex-col gap-4">
+            <div
+              className={`flex flex-col gap-4 fixed  right-0 w-64 p-4  ${
+                theme === "dark" ? "bg-gray-800 " : "bg-white "
+              }  shadow-lg border-l border-b border-gray-200 dark:border-gray-700`}
+            >
               {sidebarLinks.map(({ name, path, icon: Icon }) => (
                 <Link
                   key={name}
                   to={path}
-                  className="flex items-center gap-3 text-gray-700 dark:text-gray-300 hover:text-green-500 transition-colors"
+                  className="flex items-center gap-3 mb-2 text-gray-700 dark:text-gray-300 hover:text-green-500 transition-colors"
                   onClick={() => setIsSidebarOpen(false)}
                 >
                   <Icon className="h-5 w-5 text-green-500" />
                   <span>{name}</span>
                 </Link>
               ))}
-            </div>
 
-            {/* Logout Button */}
-            <Button
-              variant="outline"
-              className="w-full mt-6 border-red-500 text-red-500 hover:bg-red-50 dark:hover:bg-red-900"
-              onClick={() => {
-                logout();
-                setIsSidebarOpen(false);
-                navigate("/login");
-              }}
-            >
-              <LogOut className="h-5 w-5 mr-2" />
-              Logout
-            </Button>
+              {/* Logout Button */}
+              <Button
+                variant="outline"
+                className="w-full border-red-500 text-red-500 hover:bg-red-50 dark:hover:bg-red-900"
+                onClick={() => {
+                  logout();
+                  setIsSidebarOpen(false);
+                  navigate("/login");
+                }}
+              >
+                <LogOut className="h-5 w-5 mr-2" />
+                Logout
+              </Button>
+            </div>
           </motion.div>
         )}
       </AnimatePresence>
@@ -278,9 +276,11 @@ const Header = () => {
       {isSidebarOpen && (
         <motion.div
           initial={{ opacity: 0 }}
-          animate={{ opacity: 0.5 }}
+          animate={{ opacity: 0 }}
           exit={{ opacity: 0 }}
-          className="fixed inset-0 bg-black z-40"
+          className={`fixed inset-0 bg-black/50 z-50 ${
+            theme === "dark" ? "bg-gray-900/50" : "bg-black/50"
+          }`}
           onClick={() => setIsSidebarOpen(false)}
         />
       )}

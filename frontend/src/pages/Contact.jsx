@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { motion } from "framer-motion";
-import { Mail, Phone, MapPin, Send } from "lucide-react";
+import { Mail, Phone, MapPin, Send, Leaf } from "lucide-react";
 import { useTheme } from "next-themes";
 
 // Animation Variants
@@ -210,10 +210,10 @@ const Contact = () => {
                 <div>
                   <h3 className="text-lg font-semibold">Call Us</h3>
                   <p className="text-sm text-muted-foreground dark:text-gray-300">
-                    +1 (555) 123-4567
+                    +91 9460143008
                   </p>
                   <p className="text-sm text-muted-foreground dark:text-gray-300">
-                    Mon-Fri, 9 AM - 5 PM PST
+                    Mon-Fri, 9 AM - 5 PM IST
                   </p>
                 </div>
               </div>
@@ -222,7 +222,8 @@ const Contact = () => {
                 <div>
                   <h3 className="text-lg font-semibold">Visit Us</h3>
                   <p className="text-sm text-muted-foreground dark:text-gray-300">
-                    123 Green Lane, Eco City, CA 94105
+                    Indian Institute of Technology Patna, Bihta, Patna, Bihar
+                    801106, India
                   </p>
                   <p className="text-sm text-muted-foreground dark:text-gray-300">
                     By appointment only

@@ -47,7 +47,7 @@ const LocationPage = () => {
     try {
       // Save location data to Firestore under the user's document
       await setDoc(doc(db, "users", user.uid), { location: locationData }, { merge: true });
-      navigate("/home");
+      navigate("/features");
     } catch (error) {
       console.error("Error saving location data:", error);
       alert("Failed to save location data. Please try again.");

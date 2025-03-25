@@ -20,7 +20,7 @@ import {
 } from "lucide-react";
 import { useTheme } from "next-themes";
 
-// Animation Variants
+// Animation Variants for smooth transitions
 const fadeInUp = {
   initial: { opacity: 0, y: 20 },
   animate: { opacity: 1, y: 0 },
@@ -32,14 +32,15 @@ const staggerChildren = {
   animate: {
     opacity: 1,
     transition: {
-      staggerChildren: 0.1,
+      staggerChildren: 0.1, // Adds a slight delay between child elements appearing
     },
   },
 };
 
 const CarbonFootprintOverview = () => {
-  const { theme } = useTheme();
+  const { theme } = useTheme(); // Accesses the current theme (dark/light mode)
 
+  // Data for different categories contributing to the carbon footprint
   const categories = [
     {
       title: "Transportation",
@@ -157,7 +158,7 @@ const CarbonFootprintOverview = () => {
   return (
     <section
       className={`py-16 ${
-        theme === "dark" ? "bg-gray-950 text-gray-100" : "bg-white text-black"
+        theme === "dark" ? "bg-card text-gray-100" : "bg-green-50 text-black"
       }`}
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -172,7 +173,7 @@ const CarbonFootprintOverview = () => {
           </p>
         </motion.div>
 
-        {/* 2x2 Grid of Cards */}
+        {/* Grid of category cards */}
         <motion.div
           variants={staggerChildren}
           initial="initial"
@@ -183,7 +184,7 @@ const CarbonFootprintOverview = () => {
             <motion.div
               key={idx}
               variants={fadeInUp}
-              whileHover={{ scale: 1.05 }}
+              whileHover={{ scale: 1.05 }} // Subtle hover effect
               className={`p-6 rounded-lg shadow-lg border border-gray-200 dark:border-gray-800 backdrop-blur-lg ${
                 theme === "dark" ? "bg-gray-900" : "bg-card"
               }`}
@@ -194,6 +195,7 @@ const CarbonFootprintOverview = () => {
               <ul className="space-y-2">
                 {category.items.map((item, index) => (
                   <li key={index} className="flex items-center gap-2">
+                    {/* Dynamically rendering icons */}
                     <item.icon className={`h-5 w-5 ${item.color}`} />
                     <span className={`text-sm ${item.color}`}>
                       {item.name}: {item.emission} CO₂

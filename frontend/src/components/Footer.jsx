@@ -1,12 +1,14 @@
 import React from "react";
-import { Leaf, Github, Twitter, Linkedin } from "lucide-react";
-import { Button } from "../components/ui/button";
+import { Leaf, Instagram, Twitter, Linkedin } from "lucide-react";
+import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 
 const Footer = () => (
   <footer className="bg-background dark:bg-gray-900 border-t py-12">
+    {/* Container for content with centered layout and horizontal padding */}
     <div className="container mx-auto px-6">
       <div className="grid grid-cols-1 md:grid-cols-4 gap-12">
+        {/* Brand Section */}
         <div>
           <div className="flex items-center gap-2 mb-4">
             <Leaf className="h-8 w-8 text-green-500 animate-pulse" />
@@ -22,6 +24,8 @@ const Footer = () => (
             Created during a hackathon | Powered by innovation and teamwork
           </p>
         </div>
+
+        {/* Navigation Links */}
         <div>
           <h4 className="font-semibold mb-4 text-lg">Quick Links</h4>
           {[
@@ -54,10 +58,12 @@ const Footer = () => (
             )
           )}
         </div>
+
+        {/* Social Media & Subscription */}
         <div>
           <h4 className="font-semibold mb-4 text-lg">Connect With Us</h4>
           <div className="flex gap-6 mb-6">
-            {[Github, Twitter, Linkedin].map((Icon, idx) => (
+            {[Instagram, Twitter, Linkedin].map((Icon, idx) => (
               <a
                 key={idx}
                 href="#"
@@ -80,6 +86,8 @@ const Footer = () => (
           </div>
         </div>
       </div>
+
+      {/* Footer Bottom Section */}
       <div className="mt-12 pt-8 border-t text-center">
         <p className="text-muted-foreground dark:text-gray-300">
           © {new Date().getFullYear()} EcoTrack. All rights reserved.

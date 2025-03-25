@@ -12,9 +12,19 @@ import {
 import FeatureCard from "./FeatureCard";
 
 const fadeInUp = {
-  initial: { opacity: 0, y: 20 },
-  whileInView: { opacity: 1, y: 0 },
+  initial: { opacity: 0, y: 30 },
+  animate: { opacity: 1, y: 0 },
   transition: { duration: 0.5 },
+};
+
+const cardVariants = {
+  hidden: { opacity: 0, scale: 0.9, y: 40 },
+  visible: (index) => ({
+    opacity: 1,
+    scale: 1,
+    y: 0,
+    transition: { duration: 0.4, delay: index * 0.1 },
+  }),
 };
 
 const WhyEcoTrack = () => {
@@ -47,7 +57,7 @@ const WhyEcoTrack = () => {
     {
       icon: BusFront,
       title: "Smart Travel Planner",
-      description: "Find the greenest transport options.",
+      description: "Identify the most eco-friendly transportation methods.",
     },
     {
       icon: Globe,
@@ -62,9 +72,11 @@ const WhyEcoTrack = () => {
   ];
 
   return (
-    <section className="py-24 px-6 text-center bg-green-50 dark:bg-gray-900">
+      // Main content of the WhyEcoTrack component
+    <section className="py-24 px-6 text-center bg-green-50 dark:bg-card">
       <div className="container mx-auto px-6 text-center">
-        <motion.h2
+        <div>
+          <motion.h2
           {...fadeInUp}
           className="text-4xl md:text-5xl font-bold mb-6"
         >
@@ -78,11 +90,28 @@ const WhyEcoTrack = () => {
           Harness cutting-edge technology to live sustainably and make a
           difference.
         </motion.p>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+
+        <motion.div
+          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8"
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: false, amount: 0.1 }}
+        >
           {benefits.map((benefit, index) => (
-            <FeatureCard key={benefit.title} {...benefit} delay={index * 0.2} />
+            <motion.div
+              key={benefit.title}
+              custom={index}
+              variants={cardVariants}
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: false, amount: 0.1 }}
+            >
+              <FeatureCard {...benefit} />
+            </motion.div>
           ))}
+        </motion.div>
         </div>
+        
       </div>
     </section>
   );

@@ -1,28 +1,22 @@
 import React from "react";
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
+import { FaGlobe } from "react-icons/fa";
 import {
   Leaf,
-  Zap,
-  Globe,
+  ShoppingBag,
+  Footprints,
   Trophy,
   Users,
-  Droplet,
-  Trash2,
-  Calendar,
-  Award,
-  Sprout,
-  CheckCircle,
-  Cloud,
   Sun,
   BarChart,
-  MessageSquare,
   Shield,
   TrendingUp,
   Heart,
   Gift,
 } from "lucide-react";
 import { useTheme } from "next-themes";
+import FeaturesSection from "@/components/FeaturesSection";
 
 // Animation Variants
 const fadeInUp = {
@@ -51,78 +45,39 @@ const Features = () => {
       path: "/activity-tracking",
     },
     {
-      icon: Globe,
+      icon: Footprints,
       title: "Carbon Footprint Calculator",
       desc: "Measure your carbon emissions with our AI-powered tool and get personalized tips to reduce them.",
-      color: "text-blue-500",
+      color: "text-green-500",
       path: "/carbon-footprint-calculator",
     },
     {
       icon: Trophy,
       title: "Gamified Challenges",
       desc: "Take on weekly eco-challenges, earn points, and compete on the leaderboard to become an eco-champion.",
-      color: "text-yellow-500",
+      color: "text-green-500",
       path: "/gamified-challenges",
     },
     {
       icon: Users,
       title: "Community Hub",
       desc: "Join a global network of eco-warriors, share tips, and inspire each other to live sustainably.",
-      color: "text-purple-500",
+      color: "text-green-500",
       path: "/community-hub",
     },
     {
-      icon: Zap,
-      title: "Smart Insights",
-      desc: "Get real-time data and AI-driven suggestions to optimize your sustainability efforts effortlessly.",
-      color: "text-indigo-500",
-      path: "/smart-insights",
+      icon: FaGlobe,
+      title: "3D Earth View",
+      desc: "Heatmap showcasing eco-friendly habits adopted across different regions.",
+      color: "text-green-500",
+      path: "/earth-3d",
     },
     {
-      icon: Droplet,
-      title: "Resource Conservation",
-      desc: "Track water and energy usage, set goals, and celebrate milestones in reducing waste.",
-      color: "text-teal-500",
-      path: "/resource-conservation",
-    },
-  ];
-
-  const uniqueFeatures = [
-    {
-      icon: Trash2,
-      title: "Zero-Waste Tracker",
-      desc: "Monitor your waste reduction progress with detailed stats and tips for a zero-waste lifestyle.",
-      color: "text-red-500",
-    },
-    {
-      icon: Calendar,
-      title: "Eco-Goal Planner",
-      desc: "Set and manage personal sustainability goals with reminders and progress tracking.",
-      color: "text-orange-500",
-    },
-    {
-      icon: Award,
-      title: "Achievement Badges",
-      desc: "Earn unique badges for completing tasks and milestones—show off your eco-credentials!",
-      color: "text-amber-500",
-    },
-    {
-      icon: Sprout,
-      title: "Tree Planting Rewards",
-      desc: "Contribute to real-world tree planting with points earned from your eco-actions.",
-      color: "text-green-600",
-    },
-    {
-      icon: Cloud,
-      title: "Weather Integration",
-      desc: "Adapt your eco-choices based on local weather data, seamlessly integrated into your dashboard.",
-      color: "text-gray-500",
-    },
-    {
-      icon: MessageSquare,
-      title: "Eco-Tips Feed",
-      desc: "Daily curated tips and articles to keep you informed and motivated on your green journey.",
-      color: "text-pink-500",
+      icon: ShoppingBag,
+      title: "Carbon Offset Market",
+      desc: "Offset your carbon footprint by trading credits in our eco-friendly market, supporting global sustainability.",
+      color: "text-green-500",
+      path: "/carbon-offset-market",
     },
   ];
 
@@ -182,13 +137,7 @@ const Features = () => {
             Discover the powerful tools and unique features that make EcoTrack
             your ultimate companion for sustainable living.
           </p>
-          <motion.button
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-            className="mt-6 py-3 px-8 bg-gradient-to-r from-green-500 to-blue-500 text-white font-semibold rounded-lg shadow-lg hover:from-green-600 hover:to-blue-600"
-          >
-            Explore Now
-          </motion.button>
+          
         </motion.div>
 
         {/* Core Features */}
@@ -260,59 +209,12 @@ const Features = () => {
         </motion.div>
 
         {/* Unique Features */}
-        <motion.div
-          variants={staggerChildren}
-          initial="initial"
-          animate="animate"
-          className="bg-green-50 dark:bg-card p-4 sm:p-6 md:p-8 rounded-lg shadow-lg border border-border dark:border-border mb-6 sm:mb-8 md:mb-12"
-        >
-          <motion.h2
-            variants={fadeInUp}
-            className="text-2xl sm:text-3xl font-semibold mb-4 sm:mb-6 text-center text-green-600 dark:text-green-400"
-          >
-            What Sets Us Apart
-          </motion.h2>
-          <motion.p
-            variants={fadeInUp}
-            className="text-base sm:text-lg text-muted-foreground dark:text-muted-foreground mb-4 sm:mb-8 text-center"
-          >
-            EcoTrack’s unique features make sustainability fun, rewarding, and
-            impactful.
-          </motion.p>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 md:gap-8">
-            {uniqueFeatures.map((feature, index) => (
-              <motion.div
-                key={index}
-                variants={fadeInUp}
-                whileHover={{ scale: 1.02 }}
-                className={`p-4 sm:p-6 rounded-lg ${
-                  theme === "dark" ? "bg-card" : "bg-muted"
-                } shadow-md flex flex-col items-start`}
-              >
-                <div className="flex items-center mb-2 sm:mb-3">
-                  <feature.icon
-                    className={`w-6 h-6 sm:w-8 sm:h-8 ${feature.color} mr-2 sm:mr-3`}
-                  />
-                  <h3 className="text-lg sm:text-xl font-semibold">
-                    {feature.title}
-                  </h3>
-                </div>
-                <p className="text-sm text-muted-foreground dark:text-muted-foreground mb-2 sm:mb-4">
-                  {feature.desc}
-                </p>
-                <div className="flex items-center">
-                  <CheckCircle className="w-4 h-4 sm:w-5 sm:h-5 text-green-500 mr-1 sm:mr-2" />
-                  <span className="text-sm text-green-500">Active Feature</span>
-                </div>
-              </motion.div>
-            ))}
-          </div>
-        </motion.div>
+        <FeaturesSection />
 
         {/* Interactive Demo */}
         <motion.div
           variants={fadeInUp}
-          className="bg-card dark:bg-card p-4 sm:p-6 md:p-8 rounded-lg shadow-lg border border-border dark:border-border mb-6 sm:mb-8 md:mb-12"
+          className="bg-card dark:bg-gray-900 p-4 sm:p-6 md:p-8 rounded-lg shadow-lg border border-border dark:border-border mb-6 sm:mb-8 md:mb-12"
         >
           <motion.h2
             variants={fadeInUp}
@@ -330,7 +232,7 @@ const Features = () => {
             <motion.div
               whileHover={{ scale: 1.05 }}
               className={`p-4 sm:p-6 rounded-lg ${
-                theme === "dark" ? "bg-card" : "bg-muted"
+                theme === "dark" ? "bg-gray-800" : "bg-muted"
               } flex flex-col items-center text-center`}
             >
               <Sun className="w-8 h-8 sm:w-12 sm:h-12 text-yellow-500 mb-2 sm:mb-4 animate-pulse" />
@@ -344,7 +246,7 @@ const Features = () => {
             <motion.div
               whileHover={{ scale: 1.05 }}
               className={`p-4 sm:p-6 rounded-lg ${
-                theme === "dark" ? "bg-card" : "bg-muted"
+                theme === "dark" ? "bg-gray-800" : "bg-muted"
               } flex flex-col items-center text-center`}
             >
               <BarChart className="w-8 h-8 sm:w-12 sm:h-12 text-blue-500 mb-2 sm:mb-4" />
@@ -358,7 +260,7 @@ const Features = () => {
             <motion.div
               whileHover={{ scale: 1.05 }}
               className={`p-4 sm:p-6 rounded-lg ${
-                theme === "dark" ? "bg-card" : "bg-muted"
+                theme === "dark" ? "bg-gray-800" : "bg-muted"
               } flex flex-col items-center text-center`}
             >
               <Trophy className="w-8 h-8 sm:w-12 sm:h-12 text-yellow-500 mb-2 sm:mb-4 animate-bounce" />
@@ -377,7 +279,7 @@ const Features = () => {
           variants={staggerChildren}
           initial="initial"
           animate="animate"
-          className="bg-green-50 dark:bg-card p-4 sm:p-6 md:p-8 rounded-lg shadow-lg border border-border dark:border-border mb-6 sm:mb-8 md:mb-12"
+          className="bg-green-50 dark:bg-gray-900 p-4 sm:p-6 md:p-8 rounded-lg shadow-lg border border-border dark:border-border mb-6 sm:mb-8 md:mb-12"
         >
           <motion.h2
             variants={fadeInUp}
@@ -398,7 +300,7 @@ const Features = () => {
                 key={index}
                 variants={fadeInUp}
                 className={`p-4 sm:p-6 rounded-lg ${
-                  theme === "dark" ? "bg-card" : "bg-muted"
+                  theme === "dark" ? "bg-gray-800" : "bg-muted"
                 } flex items-start`}
               >
                 <benefit.icon className="w-6 h-6 sm:w-8 sm:h-8 text-green-500 mr-2 sm:mr-4 flex-shrink-0" />

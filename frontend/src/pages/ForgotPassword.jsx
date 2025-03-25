@@ -3,12 +3,11 @@ import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
 import { Mail, CheckCircle } from "lucide-react";
 import validator from "validator";
+import { auth } from "../services/firebase";
+import { sendPasswordResetEmail } from "firebase/auth";
 import { useTheme } from "next-themes";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-
-import { auth } from "../services/firebase";
-import { sendPasswordResetEmail } from "firebase/auth";
 
 function ForgotPassword() {
   const [email, setEmail] = useState("");

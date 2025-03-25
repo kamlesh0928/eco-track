@@ -2,9 +2,19 @@ import React from "react";
 import { motion } from "framer-motion";
 
 const fadeInUp = {
-  initial: { opacity: 0, y: 20 },
-  whileInView: { opacity: 1, y: 0 },
+  initial: { opacity: 0, y: 30 },
+  animate: { opacity: 1, y: 0 },
   transition: { duration: 0.5 },
+};
+
+const faqVariants = {
+  hidden: { opacity: 0, y: 30, scale: 0.95 },
+  visible: (index) => ({
+    opacity: 1,
+    y: 0,
+    scale: 1,
+    transition: { duration: 0.4, delay: index * 0.1 },
+  }),
 };
 
 const FAQSection = () => {
@@ -36,7 +46,7 @@ const FAQSection = () => {
   ];
 
   return (
-    <section className="py-24 px-6 text-center">
+    <section className="py-24 px-6 text-center bg-green-50 dark:bg-card">
       <div className="container mx-auto px-6 text-center">
         <motion.h2
           {...fadeInUp}
@@ -50,13 +60,21 @@ const FAQSection = () => {
         >
           Got questions? We’ve got answers.
         </motion.p>
-        <div className="max-w-3xl mx-auto space-y-6">
+
+        <motion.div
+          className="max-w-3xl mx-auto space-y-6"
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: false, amount: 0.1 }}
+        >
           {faqs.map((faq, index) => (
             <motion.div
               key={index}
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: index * 0.2 }}
+              custom={index}
+              variants={faqVariants}
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: false, amount: 0.1 }}
               className="bg-card/50 dark:bg-gray-900 p-6 rounded-lg shadow-lg text-left"
             >
               <h3 className="text-xl font-semibold mb-2">{faq.question}</h3>
@@ -65,7 +83,7 @@ const FAQSection = () => {
               </p>
             </motion.div>
           ))}
-        </div>
+        </motion.div>
       </div>
     </section>
   );

@@ -295,13 +295,15 @@ const Leaderboard = () => {
               </motion.div>
             ))}
           </div>
+          <div className="text-center">
           <motion.button
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
-            className="mt-6 w-full py-3 px-4 rounded-lg bg-gradient-to-r from-yellow-500 to-orange-500 text-white font-semibold shadow-lg hover:from-yellow-600 hover:to-orange-600"
+            className="mt-6 lg:w-1/2 mx-auto py-3 px-4 rounded-lg bg-gradient-to-r from-yellow-500 to-orange-500 text-white font-semibold shadow-lg hover:from-yellow-600 hover:to-orange-600"
           >
             See Full Leaderboard
           </motion.button>
+          </div>
         </motion.div>
 
         {/* Weekly Tasks */}
