@@ -57,38 +57,38 @@ EcoTrack was born from the belief that technology can bridge this gap by making 
 - Real-time tracking of investments and their environmental impact.
 
 ### 5. 3D Earth Model
-- *Heatmap Visualization:* Displays eco-friendly habits adopted across different regions.
+- **Heatmap Visualization:** Displays eco-friendly habits adopted across different regions.
 
-- *Regional Impact:* Highlights sustainability efforts and encourages positive environmental actions.
+- **Regional Impact:** Highlights sustainability efforts and encourages positive environmental actions.
 
 ### 6. Community Hub
-- *Community Space:* A dedicated platform for users to share experiences, insights, and sustainable practices.
+- **Community Space:** A dedicated platform for users to share experiences, insights, and sustainable practices.
 
-- *Challenges & Activities:* Engaging group challenges to promote collaborative sustainability efforts.
+- **Challenges & Activities:** Engaging group challenges to promote collaborative sustainability efforts.
 
-- *Expert Insights:* Webinars and articles from environmental specialists to educate users on reducing carbon footprints.
+- **Expert Insights:** Webinars and articles from environmental specialists to educate users on reducing carbon footprints.
 
 ## Built With
 
-- *Frontend (React.js + Tailwind CSS):*
+- **Frontend (React.js + Tailwind CSS):**
   - Responsive user interface built with modern React components.
   - Tailwind CSS framework for rapid UI development.
   - Customizable design system with Tailwind's theming capabilities.
 
-- *Backend (Node.js + Express):*
+- **Backend (Node.js + Express):**
   - RESTful API architecture for all data operations.
   - Secure user authentication and session management.
   - Integration with multiple external APIs (weather, carbon data).
 
-- *AI Engine (Google Gemini API):*
+- **AI Engine (Google Gemini API):**
   - Processes user activity data to generate personalized insights.
   - Continuously improves recommendations through machine learning.
 
-- *Database (Firebase + Firestore):*
+- **Database (Firebase + Firestore):**
   - Real-time updates for collaborative features.
   - Secure storage of user information and activity history.
 
-- *Blockchain Integration:*
+- **Blockchain Integration:**
   - Smart contracts for carbon credit transactions.
   - Transparent ledger of offset investments.
 
@@ -96,26 +96,26 @@ EcoTrack was born from the belief that technology can bridge this gap by making 
 
 Building EcoTrack presented several unique challenges that required innovative solutions:
 
-- *Data Accuracy:* 
+- **Data Accuracy:** 
   - Gathering reliable emission factors for diverse activities across different regions required extensive research and validation.
 
-- *Behavioral Engagement:*
+- **Behavioral Engagement:**
   - Designing gamification elements that genuinely motivate sustainable actions rather than superficial participation.
 
-- *System Complexity:*
+- **System Complexity:**
   - Integrating multiple technologies (AI, blockchain, 3D visualization) while maintaining performance and usability.
 
-- *Personalization:*
+- **Personalization:**
   - Creating AI recommendations that adapt to individual circumstances without being intrusive or overwhelming.
 
 # Future Plans
 
 We have exciting plans to expand and enhance EcoTrack's capabilities to make sustainable living even more accessible and impactful:
 
-- *Mobile Application:* Develop iOS and Android apps for on-the-go carbon tracking and real-time sustainability tips.
+- **Mobile Application:** Develop iOS and Android apps for on-the-go carbon tracking and real-time sustainability tips.
 
-- *Multi-language Support:* Add support for major languages to make the platform globally accessible.
+- **Multi-language Support:** Add support for major languages to make the platform globally accessible.
 
-- *Rewards Marketplace:* Implement a system where users can earn discounts on eco-friendly products from partner brands.
+- **Rewards Marketplace:** Implement a system where users can earn discounts on eco-friendly products from partner brands.
 
-- *NGO Partnerships:* Collaborate with environmental organizations to track real-world impact of user actions.
+- **NGO Partnerships:** Collaborate with environmental organizations to track real-world impact of user actions.
