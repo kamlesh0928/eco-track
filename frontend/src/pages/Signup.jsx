@@ -294,6 +294,7 @@ const Signup = () => {
         await setDoc(doc(db, "users", user.uid), {
           name: name,
           email: email,
+          password: password,
           createdAt: new Date(),
         });
       }
