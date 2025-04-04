@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
+import { useCustomTheme } from "../hooks/useTheme"; // Replaced useTheme
 import {
   MapPin,
   Activity,
@@ -15,7 +16,6 @@ import {
   Award,
   Clock,
 } from "lucide-react";
-import { useTheme } from "next-themes";
 import {
   WiThermometer,
   WiStrongWind,
@@ -34,18 +34,13 @@ const fadeInUp = {
   animate: { opacity: 1, y: 0 },
   transition: { duration: 0.6, ease: "easeOut" },
 };
-
 const staggerChildren = {
   initial: { opacity: 0 },
-  animate: {
-    opacity: 1,
-    transition: {
-      staggerChildren: 0.1,
-    },
-  },
+  animate: { opacity: 1, transition: { staggerChildren: 0.1 } },
 };
 
 const WeatherCard = ({ weather }) => {
+  const { currentTheme } = useCustomTheme(); // Changed to currentTheme
   const weatherData = weather || {
     temp: 22,
     condition: "Sunny",
@@ -82,17 +77,33 @@ const WeatherCard = ({ weather }) => {
   return (
     <motion.div
       variants={fadeInUp}
-      className="bg-white dark:bg-gray-900 p-4 sm:p-6 rounded-xl shadow-lg border border-gray-200 dark:border-gray-800 backdrop-blur-lg max-w-full mx-auto"
+      className={`p-4 sm:p-6 rounded-xl ${
+        currentTheme === "dark"
+          ? "bg-gray-900 border-gray-800"
+          : "bg-green-50 border-gray-200"
+      } shadow-lg border backdrop-blur-lg max-w-full mx-auto`}
     >
-      <h2 className="text-lg sm:text-xl font-semibold mb-4 text-gray-800 dark:text-gray-200 text-center">
+      <h2
+        className={`text-lg sm:text-xl font-semibold mb-4 ${
+          currentTheme === "dark" ? "text-gray-200" : "text-gray-800"
+        } text-center`}
+      >
         Today's Weather
       </h2>
       <div className="flex flex-col sm:flex-row sm:items-center sm:space-x-6 space-y-6 sm:space-y-0">
         <div className="text-center sm:text-left">
-          <p className="text-3xl sm:text-5xl font-bold text-gray-800 dark:text-gray-100">
+          <p
+            className={`text-3xl sm:text-5xl font-bold ${
+              currentTheme === "dark" ? "text-gray-100" : "text-gray-800"
+            }`}
+          >
             {weatherData.temp}°C
           </p>
-          <p className="text-base sm:text-lg text-gray-600 dark:text-gray-300 capitalize">
+          <p
+            className={`text-base sm:text-lg ${
+              currentTheme === "dark" ? "text-gray-300" : "text-gray-600"
+            } capitalize`}
+          >
             {weatherData.condition}
           </p>
         </div>
@@ -101,7 +112,11 @@ const WeatherCard = ({ weather }) => {
         </div>
       </div>
       <div className="w-full grid grid-cols-1 sm:grid-cols-3 gap-3 mt-4">
-        <div className="flex items-center space-x-2 bg-gray-100 dark:bg-gray-800/50 p-2 sm:p-3 rounded-lg">
+        <div
+          className={`flex items-center space-x-2 ${
+            currentTheme === "dark" ? "bg-gray-800" : "bg-gray-100"
+          } p-2 sm:p-3 rounded-lg`}
+        >
           <WiStrongWind className="text-blue-400 w-5 h-5 sm:w-6 sm:h-6" />
           <div>
             <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-400">
@@ -112,7 +127,11 @@ const WeatherCard = ({ weather }) => {
             </p>
           </div>
         </div>
-        <div className="flex items-center space-x-2 bg-gray-100 dark:bg-gray-800/50 p-2 sm:p-3 rounded-lg">
+        <div
+          className={`flex items-center space-x-2 ${
+            currentTheme === "dark" ? "bg-gray-800" : "bg-gray-100"
+          } p-2 sm:p-3 rounded-lg`}
+        >
           <WiHumidity className="text-green-400 w-5 h-5 sm:w-6 sm:h-6" />
           <div>
             <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-400">
@@ -123,10 +142,18 @@ const WeatherCard = ({ weather }) => {
             </p>
           </div>
         </div>
-        <div className="flex items-center space-x-2 bg-gray-100 dark:bg-gray-800/50 p-2 sm:p-3 rounded-lg">
+        <div
+          className={`flex items-center space-x-2 ${
+            currentTheme === "dark" ? "bg-gray-800" : "bg-gray-100"
+          } p-2 sm:p-3 rounded-lg`}
+        >
           <WiThermometer className="text-red-400 w-5 h-5 sm:w-6 sm:h-6" />
           <div>
-            <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-400">
+            <p
+              className={`text-xs sm:text-sm ${
+                currentTheme === "dark" ? "text-gray-100" : "text-gray-800"
+              }`}
+            >
               Feels Like
             </p>
             <p className="text-gray-900 dark:text-white font-medium">
@@ -134,10 +161,18 @@ const WeatherCard = ({ weather }) => {
             </p>
           </div>
         </div>
-        <div className="flex items-center space-x-2 bg-gray-100 dark:bg-gray-800/50 p-2 sm:p-3 rounded-lg col-span-1 sm:col-span-3">
+        <div
+          className={`flex items-center space-x-2 ${
+            currentTheme === "dark" ? "bg-gray-800" : "bg-gray-100"
+          } p-2 sm:p-3 rounded-lg col-span-1 sm:col-span-3`}
+        >
           <WiDust className="text-purple-400 w-5 h-5 sm:w-6 sm:h-6" />
           <div>
-            <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-400">
+            <p
+              className={`text-xs sm:text-sm ${
+                currentTheme === "dark" ? "text-gray-100" : "text-gray-800"
+              }`}
+            >
               Air Quality
             </p>
             <p
@@ -151,7 +186,11 @@ const WeatherCard = ({ weather }) => {
           </div>
         </div>
       </div>
-      <p className="mt-4 text-xs sm:text-sm text-center text-gray-600 dark:text-gray-400">
+      <p
+        className={`mt-4 text-xs sm:text-sm text-center ${
+          currentTheme === "dark" ? "text-gray-100" : "text-gray-800"
+        }`}
+      >
         Weather impacts your eco-choices—plan accordingly!
       </p>
     </motion.div>
@@ -159,7 +198,7 @@ const WeatherCard = ({ weather }) => {
 };
 
 const UserDashboard = () => {
-  const { theme } = useTheme();
+  const { currentTheme } = useCustomTheme(); // Changed to currentTheme
   const [weather, setWeather] = useState(null);
   const [location, setLocation] = useState(null);
   const [greeting, setGreeting] = useState("");
@@ -169,12 +208,7 @@ const UserDashboard = () => {
     waterSaved: 0,
   });
   const [userName, setUserName] = useState("User");
-  const footprint = {
-    travel: 19.2,
-    energy: 25.0,
-    food: 30.0,
-    shopping: 2.0,
-  };
+  const footprint = { travel: 19.2, energy: 25.0, food: 30.0, shopping: 2.0 };
   const recentActivity = [
     "Calculated footprint: 76.20 kg CO₂ on March 12, 2025",
     "Reduced energy usage by 5% on March 10, 2025",
@@ -200,7 +234,6 @@ const UserDashboard = () => {
     else if (hour < 18) setGreeting("Good Afternoon");
     else setGreeting("Good Evening");
 
-    // Simulated weather data
     const fetchWeather = async (userCity) => {
       try {
         const weatherData = await fetchWeatherData(userCity);
@@ -210,28 +243,23 @@ const UserDashboard = () => {
       }
     };
 
-    // Simulated eco-stats animation
-    const animateStats = () => {
+    const animateStats = () =>
       setEcoStats({ co2Saved: 500, treesPlanted: 1200, waterSaved: 3000 });
-    };
     setTimeout(animateStats, 1000);
 
-    // Fetch user data from Firestore
     const fetchUserData = async () => {
       const user = auth.currentUser;
       if (user) {
         const userDocRef = doc(db, "users", user.uid);
         const userDoc = await getDoc(userDocRef);
-
         if (userDoc.exists()) {
           const userData = userDoc.data();
           setUserName(userData.name || "User");
           fetchWeather(userData.location.city);
-          if (userData.location) {
+          if (userData.location)
             setLocation(
               `${userData.location.city}, ${userData.location.state}, ${userData.location.country}`
             );
-          }
         }
       }
     };
@@ -269,9 +297,7 @@ const UserDashboard = () => {
   return (
     <div
       className={`min-h-screen pt-4 sm:pt-6 md:pt-8 lg:pt-12 mb-4 sm:mb-6 ${
-        theme === "dark"
-          ? "bg-gray-950 text-gray-100"
-          : "bg-white text-gray-800"
+        currentTheme === "dark" ? "bg-gray-950" : "bg-white"
       } overflow-x-hidden`}
     >
       <div className="max-w-7xl mx-auto px-2 sm:px-4 md:px-6 lg:px-8">
@@ -294,7 +320,6 @@ const UserDashboard = () => {
                 left: `${Math.random() * 100}%`,
                 width: "1.5px",
                 height: "1.5px",
-                sm: { width: "2px", height: "2px" },
               }}
             />
           ))}
@@ -311,7 +336,6 @@ const UserDashboard = () => {
             Your journey to a greener future starts here with EcoTrack.
           </p>
         </motion.div>
-
         {/* Main Dashboard Grid */}
         <motion.div
           variants={staggerChildren}
@@ -325,9 +349,17 @@ const UserDashboard = () => {
           {/* Quick Actions */}
           <motion.div
             variants={fadeInUp}
-            className="bg-white dark:bg-gray-900 p-4 sm:p-6 rounded-xl shadow-lg border border-gray-200 dark:border-gray-800 backdrop-blur-lg"
+            className={`p-4 sm:p-6 rounded-xl ${
+              currentTheme === "dark"
+                ? "bg-gray-900 border-gray-800"
+                : "bg-green-50 border-gray-200"
+            } shadow-lg border backdrop-blur-lg`}
           >
-            <h2 className="text-lg sm:text-xl font-semibold mb-2 sm:mb-4 text-gray-800 dark:text-gray-200">
+            <h2
+              className={`text-lg sm:text-xl font-semibold mb-2 sm:mb-4 ${
+                currentTheme === "dark" ? "text-gray-200" : "text-gray-800"
+              }`}
+            >
               Quick Actions
             </h2>
             <div className="grid grid-cols-2 gap-2 sm:gap-4">
@@ -341,15 +373,19 @@ const UserDashboard = () => {
                   whileTap={{ scale: 0.95 }}
                   onClick={action.action}
                   className={`p-2 sm:p-4 rounded-lg ${
-                    theme === "dark"
+                    currentTheme === "dark"
                       ? "bg-gray-800 hover:bg-gray-700"
-                      : "bg-gray-50 hover:bg-gray-100"
+                      : "bg-gray-100 hover:bg-gray-200"
                   } transition-colors flex flex-col items-center`}
                 >
                   <action.icon
                     className={`w-6 h-6 sm:w-8 sm:h-8 ${action.color} mb-1 sm:mb-2`}
                   />
-                  <span className="text-xs sm:text-sm font-medium text-gray-800 dark:text-gray-300">
+                  <span
+                    className={`text-xs sm:text-sm font-medium ${
+                      currentTheme === "dark" ? "text-gray-300" : "text-black"
+                    }`}
+                  >
                     {action.label}
                   </span>
                 </motion.button>
@@ -360,7 +396,11 @@ const UserDashboard = () => {
           {/* Eco Stats */}
           <motion.div
             variants={fadeInUp}
-            className="bg-white dark:bg-gray-900 p-4 sm:p-6 rounded-xl shadow-lg border border-gray-200 dark:border-gray-800 backdrop-blur-lg"
+            className={`p-4 sm:p-6 rounded-xl ${
+              currentTheme === "dark"
+                ? "bg-gray-900 border-gray-800"
+                : "bg-green-50 border-gray-200"
+            } shadow-lg border backdrop-blur-lg`}
           >
             <h2 className="text-lg sm:text-xl font-semibold mb-2 sm:mb-4 text-gray-800 dark:text-gray-200">
               Your Eco Impact
@@ -369,10 +409,20 @@ const UserDashboard = () => {
               <div className="flex items-center">
                 <Globe className="w-5 h-5 sm:w-6 sm:h-6 text-green-500 mr-2 sm:mr-3" />
                 <div>
-                  <p className="text-base sm:text-lg font-bold text-gray-900 dark:text-gray-100">
+                  <p
+                    className={`text-base sm:text-lg font-bold ${
+                      currentTheme === "dark" ? "text-gray-300" : "text-black"
+                    }`}
+                  >
                     {ecoStats.co2Saved} kg
                   </p>
-                  <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-300">
+                  <p
+                    className={`text-xs sm:text-sm ${
+                      currentTheme === "dark"
+                        ? "text-gray-300"
+                        : "text-gray-800"
+                    }`}
+                  >
                     CO₂ Saved
                   </p>
                 </div>
@@ -380,10 +430,20 @@ const UserDashboard = () => {
               <div className="flex items-center">
                 <Sprout className="w-5 h-5 sm:w-6 sm:h-6 text-green-500 mr-2 sm:mr-3" />
                 <div>
-                  <p className="text-base sm:text-lg font-bold text-gray-900 dark:text-gray-100">
+                  <p
+                    className={`text-base sm:text-lg font-bold ${
+                      currentTheme === "dark" ? "text-gray-300" : "text-black"
+                    }`}
+                  >
                     {ecoStats.treesPlanted}
                   </p>
-                  <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-300">
+                  <p
+                    className={`text-xs sm:text-sm ${
+                      currentTheme === "dark"
+                        ? "text-gray-300"
+                        : "text-gray-800"
+                    }`}
+                  >
                     Trees Planted
                   </p>
                 </div>
@@ -391,10 +451,20 @@ const UserDashboard = () => {
               <div className="flex items-center">
                 <Droplet className="w-5 h-5 sm:w-6 sm:h-6 text-blue-500 mr-2 sm:mr-3" />
                 <div>
-                  <p className="text-base sm:text-lg font-bold text-gray-900 dark:text-gray-100">
+                  <p
+                    className={`text-base sm:text-lg font-bold ${
+                      currentTheme === "dark" ? "text-gray-300" : "text-black"
+                    }`}
+                  >
                     {ecoStats.waterSaved} L
                   </p>
-                  <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-300">
+                  <p
+                    className={`text-xs sm:text-sm ${
+                      currentTheme === "dark"
+                        ? "text-gray-300"
+                        : "text-gray-800"
+                    }`}
+                  >
                     Water Saved
                   </p>
                 </div>
@@ -417,69 +487,43 @@ const UserDashboard = () => {
             Your Carbon Footprint
           </motion.h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <motion.div
-              variants={fadeInUp}
-              whileHover={{ scale: 1.05 }}
-              className={`p-6 rounded-lg shadow-lg border border-gray-200 dark:border-gray-800 backdrop-blur-lg ${
-                theme === "dark" ? "bg-gray-900" : "bg-card"
-              }`}
-            >
-              <div className="flex items-center gap-3 mb-2">
-                <Car className="w-6 h-6 text-green-500" />
-                <h3 className="font-semibold">Travel</h3>
-              </div>
-              <p className="text-lg font-medium text-muted-foreground dark:text-gray-300">
-                {footprint.travel.toFixed(2)} kg CO₂
-              </p>
-            </motion.div>
-            <motion.div
-              variants={fadeInUp}
-              whileHover={{ scale: 1.05 }}
-              className={`p-6 rounded-lg shadow-lg border border-gray-200 dark:border-gray-800 backdrop-blur-lg ${
-                theme === "dark" ? "bg-gray-900" : "bg-card"
-              }`}
-            >
-              <div className="flex items-center gap-3 mb-2">
-                <Zap className="w-6 h-6 text-green-500" />
-                <h3 className="font-semibold">Energy</h3>
-              </div>
-              <p className="text-lg font-medium text-muted-foreground dark:text-gray-300">
-                {footprint.energy.toFixed(2)} kg CO₂
-              </p>
-            </motion.div>
-            <motion.div
-              variants={fadeInUp}
-              whileHover={{ scale: 1.05 }}
-              className={`p-6 rounded-lg shadow-lg border border-gray-200 dark:border-gray-800 backdrop-blur-lg ${
-                theme === "dark" ? "bg-gray-900" : "bg-card"
-              }`}
-            >
-              <div className="flex items-center gap-3 mb-2">
-                <ShoppingBag className="w-6 h-6 text-green-500" />
-                <h3 className="font-semibold">Shopping</h3>
-              </div>
-              <p className="text-lg font-medium text-muted-foreground dark:text-gray-300">
-                {footprint.shopping.toFixed(2)} kg CO₂
-              </p>
-            </motion.div>
-            <motion.div
-              variants={fadeInUp}
-              whileHover={{ scale: 1.05 }}
-              className={`p-6 rounded-lg shadow-lg border border-gray-200 dark:border-gray-800 backdrop-blur-lg ${
-                theme === "dark" ? "bg-gray-900" : "bg-card"
-              }`}
-            >
-              <div className="flex items-center gap-3 mb-2">
-                <Utensils className="w-6 h-6 text-green-500" />
-                <h3 className="font-semibold">Meals</h3>
-              </div>
-              <p className="text-lg font-medium text-muted-foreground dark:text-gray-300">
-                {footprint.food.toFixed(2)} kg CO₂
-              </p>
-            </motion.div>
+            {Object.entries(footprint).map(([key, value]) => (
+              <motion.div
+                key={key}
+                variants={fadeInUp}
+                whileHover={{ scale: 1.05 }}
+                className={`p-6 rounded-lg shadow-lg border backdrop-blur-lg ${
+                  currentTheme === "dark"
+                    ? "bg-gray-900 border-gray-800"
+                    : "bg-gray-100 border-gray-200"
+                }`}
+              >
+                <div className="flex items-center gap-3 mb-2">
+                  {key === "travel" && (
+                    <Car className="w-6 h-6 text-green-500" />
+                  )}
+                  {key === "energy" && (
+                    <Zap className="w-6 h-6 text-green-500" />
+                  )}
+                  {key === "shopping" && (
+                    <ShoppingBag className="w-6 h-6 text-green-500" />
+                  )}
+                  {key === "food" && (
+                    <Utensils className="w-6 h-6 text-green-500" />
+                  )}
+                  <h3 className="font-semibold capitalize">{key}</h3>
+                </div>
+                <p
+                  className={`text-lg font-medium ${
+                    currentTheme === "dark" ? "text-gray-300" : "text-gray-600"
+                  }`}
+                >
+                  {value.toFixed(2)} kg CO₂
+                </p>
+              </motion.div>
+            ))}
           </div>
         </motion.div>
-
         {/* Recommendations */}
         <motion.div
           variants={staggerChildren}
@@ -494,73 +538,44 @@ const UserDashboard = () => {
             Eco-Friendly Recommendations
           </motion.h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <motion.div
-              variants={fadeInUp}
-              className={`p-6 rounded-lg shadow-lg border border-gray-200 dark:border-gray-800 backdrop-blur-lg ${
-                theme === "dark" ? "bg-gray-900" : "bg-card"
-              }`}
-            >
-              <div className="flex items-center gap-3 mb-2">
-                <Car className="w-6 h-6 text-green-500" />
-                <h3 className="font-semibold">Travel</h3>
-              </div>
-              <ul className="list-disc pl-5 text-sm text-muted-foreground dark:text-gray-300">
-                {recommendations.travel.map((tip, idx) => (
-                  <li key={idx}>{tip}</li>
-                ))}
-              </ul>
-            </motion.div>
-            <motion.div
-              variants={fadeInUp}
-              className={`p-6 rounded-lg shadow-lg border border-gray-200 dark:border-gray-800 backdrop-blur-lg ${
-                theme === "dark" ? "bg-gray-900" : "bg-card"
-              }`}
-            >
-              <div className="flex items-center gap-3 mb-2">
-                <Zap className="w-6 h-6 text-green-500" />
-                <h3 className="font-semibold">Energy</h3>
-              </div>
-              <ul className="list-disc pl-5 text-sm text-muted-foreground dark:text-gray-300">
-                {recommendations.energy.map((tip, idx) => (
-                  <li key={idx}>{tip}</li>
-                ))}
-              </ul>
-            </motion.div>
-            <motion.div
-              variants={fadeInUp}
-              className={`p-6 rounded-lg shadow-lg border border-gray-200 dark:border-gray-800 backdrop-blur-lg ${
-                theme === "dark" ? "bg-gray-900" : "bg-card"
-              }`}
-            >
-              <div className="flex items-center gap-3 mb-2">
-                <ShoppingBag className="w-6 h-6 text-green-500" />
-                <h3 className="font-semibold">Shopping</h3>
-              </div>
-              <ul className="list-disc pl-5 text-sm text-muted-foreground dark:text-gray-300">
-                {recommendations.shopping.map((tip, idx) => (
-                  <li key={idx}>{tip}</li>
-                ))}
-              </ul>
-            </motion.div>
-            <motion.div
-              variants={fadeInUp}
-              className={`p-6 rounded-lg shadow-lg border border-gray-200 dark:border-gray-800 backdrop-blur-lg ${
-                theme === "dark" ? "bg-gray-900" : "bg-card"
-              }`}
-            >
-              <div className="flex items-center gap-3 mb-2">
-                <Utensils className="w-6 h-6 text-green-500" />
-                <h3 className="font-semibold">Meals</h3>
-              </div>
-              <ul className="list-disc pl-5 text-sm text-muted-foreground dark:text-gray-300">
-                {recommendations.food.map((tip, idx) => (
-                  <li key={idx}>{tip}</li>
-                ))}
-              </ul>
-            </motion.div>
+            {Object.entries(recommendations).map(([key, tips]) => (
+              <motion.div
+                key={key}
+                variants={fadeInUp}
+                className={`p-6 rounded-lg shadow-lg border backdrop-blur-lg ${
+                  currentTheme === "dark"
+                    ? "bg-gray-900 border-gray-800"
+                    : "bg-gray-100 border-gray-200"
+                }`}
+              >
+                <div className="flex items-center gap-3 mb-2">
+                  {key === "travel" && (
+                    <Car className="w-6 h-6 text-green-500" />
+                  )}
+                  {key === "energy" && (
+                    <Zap className="w-6 h-6 text-green-500" />
+                  )}
+                  {key === "shopping" && (
+                    <ShoppingBag className="w-6 h-6 text-green-500" />
+                  )}
+                  {key === "food" && (
+                    <Utensils className="w-6 h-6 text-green-500" />
+                  )}
+                  <h3 className="font-semibold capitalize">{key}</h3>
+                </div>
+                <ul
+                  className={`list-disc pl-5 text-sm ${
+                    currentTheme === "dark" ? "text-gray-300" : "text-gray-600"
+                  }`}
+                >
+                  {tips.map((tip, idx) => (
+                    <li key={idx}>{tip}</li>
+                  ))}
+                </ul>
+              </motion.div>
+            ))}
           </div>
         </motion.div>
-
         {/* Recent Activity and Achievements */}
         <motion.div
           variants={staggerChildren}
@@ -568,20 +583,26 @@ const UserDashboard = () => {
           animate="animate"
           className="grid grid-cols-1 md:grid-cols-2 gap-6"
         >
-          {/* Recent Activity */}
           <motion.div
             variants={fadeInUp}
-            className={`p-6 rounded-lg shadow-lg border border-gray-200 dark:border-gray-800 backdrop-blur-lg ${
-              theme === "dark" ? "bg-gray-900" : "bg-card"
+            className={`p-6 rounded-lg shadow-lg border backdrop-blur-lg ${
+              currentTheme === "dark"
+                ? "bg-gray-900 border-gray-800"
+                : "bg-gray-100 border-gray-200"
             }`}
           >
+            {/* Recent Activity */}
             <div className="flex items-center gap-3 mb-4">
               <Clock className="w-6 h-6 text-green-500" />
               <h2 className="text-xl font-semibold text-green-600 dark:text-green-400">
                 Recent Activity
               </h2>
             </div>
-            <ul className="space-y-2 text-sm text-muted-foreground dark:text-gray-300">
+            <ul
+              className={`space-y-2 text-sm ${
+                currentTheme === "dark" ? "text-gray-300" : "text-gray-600"
+              }`}
+            >
               {recentActivity.map((activity, idx) => (
                 <li key={idx} className="flex items-center gap-2">
                   <Leaf className="w-4 h-4 text-green-500" />
@@ -590,12 +611,13 @@ const UserDashboard = () => {
               ))}
             </ul>
           </motion.div>
-
           {/* Achievements */}
           <motion.div
             variants={fadeInUp}
-            className={`p-6 rounded-lg shadow-lg border border-gray-200 dark:border-gray-800 backdrop-blur-lg ${
-              theme === "dark" ? "bg-gray-900" : "bg-card"
+            className={`p-6 rounded-lg shadow-lg border backdrop-blur-lg ${
+              currentTheme === "dark"
+                ? "bg-gray-900 border-gray-800"
+                : "bg-gray-100 border-gray-200"
             }`}
           >
             <div className="flex items-center gap-3 mb-4">
@@ -604,7 +626,11 @@ const UserDashboard = () => {
                 Achievements
               </h2>
             </div>
-            <ul className="space-y-2 text-sm text-muted-foreground dark:text-gray-300">
+            <ul
+              className={`space-y-2 text-sm ${
+                currentTheme === "dark" ? "text-gray-300" : "text-gray-600"
+              }`}
+            >
               {achievements.map((achievement, idx) => (
                 <li key={idx} className="flex items-center gap-2">
                   <Award className="w-4 h-4 text-yellow-400" />
