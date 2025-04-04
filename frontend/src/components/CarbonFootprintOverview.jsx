@@ -1,4 +1,3 @@
-import React from "react";
 import { motion } from "framer-motion";
 import {
   CarFront,
@@ -18,29 +17,20 @@ import {
   Apple,
   Package,
 } from "lucide-react";
-import { useTheme } from "next-themes";
+import { useCustomTheme } from "../hooks/useTheme";
 
-// Animation Variants for smooth transitions
 const fadeInUp = {
   initial: { opacity: 0, y: 20 },
   animate: { opacity: 1, y: 0 },
   transition: { duration: 0.6, ease: "easeOut" },
 };
-
 const staggerChildren = {
   initial: { opacity: 0 },
-  animate: {
-    opacity: 1,
-    transition: {
-      staggerChildren: 0.1, // Adds a slight delay between child elements appearing
-    },
-  },
+  animate: { opacity: 1, transition: { staggerChildren: 0.1 } },
 };
 
 const CarbonFootprintOverview = () => {
-  const { theme } = useTheme(); // Accesses the current theme (dark/light mode)
-
-  // Data for different categories contributing to the carbon footprint
+  const { currentTheme } = useCustomTheme();
   const categories = [
     {
       title: "Transportation",
@@ -83,20 +73,20 @@ const CarbonFootprintOverview = () => {
         {
           name: "Solar Energy",
           emission: "48g",
-          color: "text-green-500",
+          color: "text-yellow-500",
           icon: Sun,
+        },
+        {
+          name: "LED Lighting",
+          emission: "20g",
+          color: "text-green-500",
+          icon: Lightbulb,
         },
         {
           name: "Wind Energy",
           emission: "11g",
           color: "text-green-600",
           icon: Wind,
-        },
-        {
-          name: "LED Lighting",
-          emission: "20g",
-          color: "text-yellow-500",
-          icon: Lightbulb,
         },
       ],
     },
@@ -112,7 +102,7 @@ const CarbonFootprintOverview = () => {
         {
           name: "Electronics",
           emission: "20kg",
-          color: "text-orange-500",
+          color: "text-yellow-500",
           icon: Package,
         },
         {
@@ -158,35 +148,34 @@ const CarbonFootprintOverview = () => {
   return (
     <section
       className={`py-16 ${
-        theme === "dark" ? "bg-card text-gray-100" : "bg-green-50 text-black"
+        currentTheme === "dark" ? "bg-black" : "bg-green-50"
       }`}
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Section Heading */}
         <motion.div {...fadeInUp} className="text-center mb-12">
           <h2 className="text-4xl md:text-5xl font-extrabold mb-4 bg-gradient-to-r from-green-400 to-blue-500 bg-clip-text text-transparent">
             Carbon Footprint Overview
           </h2>
-          <p className="text-lg text-muted-foreground dark:text-gray-300 max-w-2xl mx-auto">
+          <p className="text-lg text-gray-600 dark:text-gray-300 max-w-2xl mx-auto">
             Your daily habits contribute to the health of our planet. Discover
             how you can reduce your carbon footprint and live more sustainably.
           </p>
         </motion.div>
-
-        {/* Grid of category cards */}
         <motion.div
           variants={staggerChildren}
           initial="initial"
           animate="animate"
-          className="grid grid-cols-1 md:grid-cols-2 gap-6"
+          className="max-w-5xl grid grid-cols-1 md:grid-cols-2 gap-6 mx-auto text-center"
         >
           {categories.map((category, idx) => (
             <motion.div
               key={idx}
               variants={fadeInUp}
-              whileHover={{ scale: 1.05 }} // Subtle hover effect
-              className={`p-6 rounded-lg shadow-lg border border-gray-200 dark:border-gray-800 backdrop-blur-lg ${
-                theme === "dark" ? "bg-gray-900" : "bg-card"
+              whileHover={{ scale: 1.05 }}
+              className={`p-6 rounded-lg shadow-lg border backdrop-blur-lg ${
+                currentTheme === "dark"
+                  ? "bg-gray-900 border-gray-800"
+                  : "bg-gray-100 border-gray-200"
               }`}
             >
               <h3 className="text-xl font-semibold mb-4 text-green-600 dark:text-green-400">
@@ -194,10 +183,9 @@ const CarbonFootprintOverview = () => {
               </h3>
               <ul className="space-y-2">
                 {category.items.map((item, index) => (
-                  <li key={index} className="flex items-center gap-2">
-                    {/* Dynamically rendering icons */}
-                    <item.icon className={`h-5 w-5 ${item.color}`} />
-                    <span className={`text-sm ${item.color}`}>
+                  <li key={index} className="flex items-center gap-2 ml-8">
+                    <item.icon className={`h-6 w-6 ${item.color}`} />
+                    <span className={`text-md ${item.color}`}>
                       {item.name}: {item.emission} CO₂
                     </span>
                   </li>
