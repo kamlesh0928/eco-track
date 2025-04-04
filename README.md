@@ -2,7 +2,7 @@
 
 **Demo Video:** [https://youtube.com/watch?v=-84JUppFPnQ&feature=shared](https://youtube.com/watch?v=-84JUppFPnQ&feature=shared)
 
-**MVP Link:** [https://ecotrack-9nvl.onrender.com](https://ecotrack-9nvl.onrender.com)
+**MVP Link:** [https://eco-track-sg2k.onrender.com](https://eco-track-sg2k.onrender.com)
 
 ## Table of Contents
 
