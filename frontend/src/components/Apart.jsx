@@ -1,16 +1,18 @@
 import { motion } from "framer-motion";
+import { Button } from "./ui/button";
 import {
   Trash2,
   Calendar,
   Award,
+  Sun,
+  Moon,
   Sprout,
   Cloud,
   MessageSquare,
   CheckCircle,
 } from "lucide-react";
-import { useTheme } from "next-themes";
+import { useCustomTheme } from "../hooks/useTheme";
 
-// Animation Variants
 const fadeInUp = {
   initial: { opacity: 0, y: 20 },
   animate: { opacity: 1, y: 0 },
@@ -26,7 +28,7 @@ const staggerChildren = {
 };
 
 const Apart = () => {
-  const { theme } = useTheme();
+  const { currentTheme, toggleTheme } = useCustomTheme(); // Use custom hook fully
   const uniqueFeatures = [
     {
       icon: Trash2,
@@ -65,28 +67,45 @@ const Apart = () => {
       color: "text-pink-500",
     },
   ];
+
   return (
     <div
       className={`pt-4 sm:pt-6 md:pt-8 lg:pt-12 ${
-        theme === "dark" ? "dark" : ""
-      } bg-background text-foreground overflow-x-hidden`}
+        currentTheme === "dark" ? "bg-card" : ""
+      } overflow-x-hidden`}
     >
+      <Button
+        variant="ghost"
+        size="icon"
+        onClick={toggleTheme}
+        className="text-gray-700 dark:text-gray-300 hover:text-green-500 hidden"
+      >
+      </Button>
+
       <div className="container mx-auto px-2 sm:px-4 md:px-6 lg:px-8">
         <motion.div
           variants={staggerChildren}
           initial="initial"
           animate="animate"
-          className="bg-green-50 dark:bg-card p-4 rounded-lg shadow-lg border border-border dark:border-border mb-2" // Reduced mb-4 sm:mb-6 to mb-2, simplified p-4 sm:p-6 md:p-8 to p-4
+          className={` ${
+            currentTheme === "dark"
+              ? "bg-card border-border"
+              : "bg-green-50 border-border"
+          } p-4 rounded-lg shadow-lg border mb-2`}
         >
           <motion.h2
             variants={fadeInUp}
-            className="text-2xl sm:text-3xl font-semibold mb-4 sm:mb-6 text-center text-green-600 dark:text-green-400"
+            className={`text-2xl sm:text-3xl font-semibold mb-4 sm:mb-6 text-center ${
+              currentTheme === "dark" ? "text-green-400" : "text-green-600"
+            }`}
           >
             What Sets Us Apart
           </motion.h2>
           <motion.p
             variants={fadeInUp}
-            className="text-base sm:text-lg text-muted-foreground dark:text-muted-foreground mb-4 sm:mb-8 text-center"
+            className={`text-base sm:text-lg ${
+              currentTheme === "dark" ? "text-gray-300" : "text-gray-600"
+            } mb-4 sm:mb-8 text-center`}
           >
             EcoTrack’s unique features make sustainability fun, rewarding, and
             impactful.
@@ -98,18 +117,28 @@ const Apart = () => {
                 variants={fadeInUp}
                 whileHover={{ scale: 1.02 }}
                 className={`p-4 sm:p-6 rounded-lg ${
-                  theme === "dark" ? "bg-card" : "bg-muted"
+                  currentTheme === "dark" ? "bg-gray-900" : "bg-gray-100"
                 } shadow-md flex flex-col items-start`}
               >
                 <div className="flex items-center mb-2 sm:mb-3">
                   <feature.icon
                     className={`w-6 h-6 sm:w-8 sm:h-8 ${feature.color} mr-2 sm:mr-3`}
                   />
-                  <h3 className="text-lg sm:text-xl font-semibold">
+                  <h3
+                    className={`text-lg sm:text-xl font-semibold ${
+                      currentTheme === "dark"
+                        ? "text-gray-100"
+                        : "text-black/95"
+                    }`}
+                  >
                     {feature.title}
                   </h3>
                 </div>
-                <p className="text-sm text-muted-foreground dark:text-muted-foreground mb-2 sm:mb-4">
+                <p
+                  className={`text-sm ${
+                    currentTheme === "dark" ? "text-gray-300" : "text-gray-600"
+                  } mb-2 sm:mb-4`}
+                >
                   {feature.desc}
                 </p>
                 <div className="flex items-center">
