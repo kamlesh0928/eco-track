@@ -10,7 +10,7 @@ import {
   Moon,
   AlertTriangle,
 } from "lucide-react";
-import { useTheme } from "next-themes";
+import { useCustomTheme } from "../hooks/useTheme"; // Assuming this exists; replace with your custom hook
 
 // Animation Variants
 const fadeInUp = {
@@ -28,7 +28,7 @@ const staggerChildren = {
 };
 
 const CarbonFootprintCalculator = () => {
-  const { theme, setTheme } = useTheme();
+  const { currentTheme, setTheme } = useCustomTheme(); // Changed to useCustomTheme
   const [travelType, setTravelType] = useState("car");
   const [distance, setDistance] = useState("");
   const [electricity, setElectricity] = useState("");
@@ -37,16 +37,20 @@ const CarbonFootprintCalculator = () => {
   const [result, setResult] = useState(null);
   const [recommendations, setRecommendations] = useState(null);
   const [error, setError] = useState("");
-  const [loading, setLoading] = useState(false);
+  const [carbonCalcLoading, setCarbonCalcLoading] = useState(false);
+  const [recommendationsLoading, setRecommendationsLoading] = useState(false);
 
   const fetchCarbonFootprint = async (data) => {
-    const response = await fetch("http://127.0.0.1:5000/calculate", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(data),
-    });
+    const response = await fetch(
+      "https://eco-track-demo-mpsa.onrender.com/calculate",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(data),
+      }
+    );
     if (!response.ok) {
       throw new Error("Failed to calculate carbon footprint");
     }
@@ -54,13 +58,16 @@ const CarbonFootprintCalculator = () => {
   };
 
   const fetchRecommendations = async (data) => {
-    const response = await fetch("http://127.0.0.1:5000/recommend", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(data),
-    });
+    const response = await fetch(
+      "https://eco-track-demo-mpsa.onrender.com/recommend",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(data),
+      }
+    );
     if (!response.ok) {
       throw new Error("Failed to fetch recommendations");
     }
@@ -72,7 +79,7 @@ const CarbonFootprintCalculator = () => {
     setError("");
     setResult(null);
     setRecommendations(null);
-    setLoading(true);
+    setCarbonCalcLoading(true);
 
     try {
       const data = {
@@ -88,13 +95,13 @@ const CarbonFootprintCalculator = () => {
     } catch (err) {
       setError("Error calculating footprint. Please check your inputs.");
     } finally {
-      setLoading(false);
+      setCarbonCalcLoading(false);
     }
   };
 
   const getRecommendations = async () => {
     setError("");
-    setLoading(true);
+    setRecommendationsLoading(true);
 
     try {
       const data = {
@@ -104,35 +111,14 @@ const CarbonFootprintCalculator = () => {
         shopping_emission: result.shopping_emission,
       };
 
-      const response = await fetch("http://127.0.0.1:5000/recommend", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(data),
-      });
+      const recommendationsData = await fetchRecommendations(data);
 
-      if (!response.ok) {
-        throw new Error("Failed to fetch recommendations");
-      }
-
-      const recommendationsData = await response.json();
-
-      // Helper function to clean recommendations
       const cleanRecommendations = (list) => {
         return list
-          .filter((tip) => {
-            // Remove tips that are empty, contain only a colon, or are too short
-            return (
-              tip &&
-              !tip.includes(":") && // Remove tips like "Travel:"
-              tip.trim().length > 2 // Remove tips with less than 3 characters
-            );
-          })
-          .map((tip) => tip.trim()); // Trim whitespace from tips
+          .filter((tip) => tip && !tip.includes(":") && tip.trim().length > 2)
+          .map((tip) => tip.trim());
       };
 
-      // Clean up each category of recommendations
       const cleanedRecommendations = {
         travel: cleanRecommendations(
           recommendationsData.recommendations?.travel || []
@@ -148,19 +134,18 @@ const CarbonFootprintCalculator = () => {
         ),
       };
 
-      // Set the cleaned recommendations in the state
       setRecommendations(cleanedRecommendations);
     } catch (err) {
       setError("Error fetching recommendations.");
     } finally {
-      setLoading(false);
+      setRecommendationsLoading(false);
     }
   };
 
   return (
     <div
       className={`min-h-screen pt-20 mb-8 ${
-        theme === "dark" ? "bg-gray-950 text-gray-100" : "bg-white text-black"
+        currentTheme === "dark" ? "bg-gray-950 text-gray-100" : ""
       }`}
     >
       <div className="max-w-8xl container mx-auto px-6 sm:px-6 lg:px-8">
@@ -171,33 +156,50 @@ const CarbonFootprintCalculator = () => {
           whileTap={{ scale: 0.9 }}
         >
           <button
-            onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
+            onClick={() => setTheme(currentTheme === "dark" ? "light" : "dark")}
             className={`p-2.5 rounded-full shadow-lg transition-all duration-300 ${
-              theme === "dark"
+              currentTheme === "dark"
                 ? "bg-gray-800 hover:bg-gray-700"
                 : "bg-gray-200 hover:bg-gray-300"
             }`}
           >
-            {theme === "dark" ? (
-              <Sun size={28} className="text-yellow-400 animate-pulse" />
+            {currentTheme === "dark" ? (
+              <Sun className="w-5 h-5" />
             ) : (
-              <Moon size={28} className="text-green-500 animate-spin" />
+              <Moon className="w-5 h-5" />
             )}
           </button>
         </motion.div>
 
         {/* Hero Section */}
-        <motion.div {...fadeInUp} className="mb-12 text-center py-16">
+        <motion.div
+          {...fadeInUp}
+          className="mb-12 text-center relative overflow-hidden py-12"
+        >
+          <div className="absolute rounded-lg inset-0 bg-gradient-to-br from-green-400/20 via-blue-500/20 to-purple-600/20 -z-10" />
           <motion.div className="relative inline-block">
             <Leaf
               size={70}
               className="mx-auto mb-6 text-green-500 animate-bounce"
             />
           </motion.div>
+          {[...Array(15)].map((_, i) => (
+            <motion.div
+              key={i}
+              initial={{ opacity: 0, y: -50 }}
+              animate={{ opacity: [0, 1, 0], y: [0, 100, 0] }}
+              transition={{ duration: 5, repeat: Infinity, delay: i * 0.3 }}
+              className="absolute w-2 h-2 bg-green-500 rounded-full"
+              style={{
+                top: `${Math.random() * 100}%`,
+                left: `${Math.random() * 100}%`,
+              }}
+            />
+          ))}
           <h1 className="text-5xl md:text-6xl font-extrabold mb-4 bg-gradient-to-r from-green-400 to-blue-500 bg-clip-text text-transparent">
             Calculate Your Carbon Footprint
           </h1>
-          <p className="text-xl text-muted-foreground dark:text-gray-300 max-w-3xl mx-auto">
+          <p className="text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto">
             Understand your environmental impact with EcoTrack’s advanced
             calculator. Input your daily activities and receive personalized
             recommendations to reduce your carbon footprint.
@@ -210,8 +212,10 @@ const CarbonFootprintCalculator = () => {
           initial="initial"
           animate="animate"
           onSubmit={calculateFootprint}
-          className={`max-w-2xl mx-auto p-8 rounded-xl shadow-lg border border-gray-200 dark:border-gray-800 backdrop-blur-lg ${
-            theme === "dark" ? "bg-gray-900" : "bg-card"
+          className={`max-w-2xl mx-auto p-8 rounded-xl shadow-lg border backdrop-blur-lg ${
+            currentTheme === "dark"
+              ? "bg-gray-900 border-gray-800"
+              : "bg-green-50 border-gray-200"
           }`}
         >
           <motion.h2
@@ -225,7 +229,7 @@ const CarbonFootprintCalculator = () => {
           <motion.div variants={fadeInUp} className="mb-6">
             <label
               className={`block text-sm font-medium mb-2 ${
-                theme === "dark" ? "text-gray-200" : "text-gray-700"
+                currentTheme === "dark" ? "text-gray-200" : "text-gray-700"
               }`}
             >
               Travel Type
@@ -235,7 +239,7 @@ const CarbonFootprintCalculator = () => {
                 value={travelType}
                 onChange={(e) => setTravelType(e.target.value)}
                 className={`w-full px-4 py-3 rounded-lg border-2 focus:outline-none focus:ring-2 transition-all duration-300 ${
-                  theme === "dark"
+                  currentTheme === "dark"
                     ? "bg-gray-800 border-gray-700 text-gray-100 focus:ring-green-500"
                     : "bg-white border-gray-300 text-gray-900 focus:ring-green-500"
                 }`}
@@ -252,7 +256,7 @@ const CarbonFootprintCalculator = () => {
           <motion.div variants={fadeInUp} className="mb-6">
             <label
               className={`block text-sm font-medium mb-2 ${
-                theme === "dark" ? "text-gray-200" : "text-gray-700"
+                currentTheme === "dark" ? "text-gray-200" : "text-gray-700"
               }`}
             >
               Distance Travelled (km)
@@ -265,7 +269,7 @@ const CarbonFootprintCalculator = () => {
                 min="0"
                 placeholder="Enter distance in km"
                 className={`w-full px-4 py-3 rounded-lg border-2 focus:outline-none focus:ring-2 transition-all duration-300 ${
-                  theme === "dark"
+                  currentTheme === "dark"
                     ? "bg-gray-800 border-gray-700 text-gray-100 focus:ring-green-500"
                     : "bg-white border-gray-300 text-gray-900 focus:ring-green-500"
                 }`}
@@ -277,7 +281,7 @@ const CarbonFootprintCalculator = () => {
           <motion.div variants={fadeInUp} className="mb-6">
             <label
               className={`block text-sm font-medium mb-2 ${
-                theme === "dark" ? "text-gray-200" : "text-gray-700"
+                currentTheme === "dark" ? "text-gray-200" : "text-gray-700"
               }`}
             >
               Electricity Used (kWh)
@@ -290,7 +294,7 @@ const CarbonFootprintCalculator = () => {
                 min="0"
                 placeholder="Enter electricity in kWh"
                 className={`w-full px-4 py-3 rounded-lg border-2 focus:outline-none focus:ring-2 transition-all duration-300 ${
-                  theme === "dark"
+                  currentTheme === "dark"
                     ? "bg-gray-800 border-gray-700 text-gray-100 focus:ring-green-500"
                     : "bg-white border-gray-300 text-gray-900 focus:ring-green-500"
                 }`}
@@ -302,7 +306,7 @@ const CarbonFootprintCalculator = () => {
           <motion.div variants={fadeInUp} className="mb-6">
             <label
               className={`block text-sm font-medium mb-2 ${
-                theme === "dark" ? "text-gray-200" : "text-gray-700"
+                currentTheme === "dark" ? "text-gray-200" : "text-gray-700"
               }`}
             >
               Food Consumption (kg of meat/dairy)
@@ -315,7 +319,7 @@ const CarbonFootprintCalculator = () => {
                 min="0"
                 placeholder="Enter food in kg"
                 className={`w-full px-4 py-3 rounded-lg border-2 focus:outline-none focus:ring-2 transition-all duration-300 ${
-                  theme === "dark"
+                  currentTheme === "dark"
                     ? "bg-gray-800 border-gray-700 text-gray-100 focus:ring-green-500"
                     : "bg-white border-gray-300 text-gray-900 focus:ring-green-500"
                 }`}
@@ -327,7 +331,7 @@ const CarbonFootprintCalculator = () => {
           <motion.div variants={fadeInUp} className="mb-8">
             <label
               className={`block text-sm font-medium mb-2 ${
-                theme === "dark" ? "text-gray-200" : "text-gray-700"
+                currentTheme === "dark" ? "text-gray-200" : "text-gray-700"
               }`}
             >
               Shopping Spent ($)
@@ -340,7 +344,7 @@ const CarbonFootprintCalculator = () => {
                 min="0"
                 placeholder="Enter shopping amount"
                 className={`w-full px-4 py-3 rounded-lg border-2 focus:outline-none focus:ring-2 transition-all duration-300 ${
-                  theme === "dark"
+                  currentTheme === "dark"
                     ? "bg-gray-800 border-gray-700 text-gray-100 focus:ring-green-500"
                     : "bg-white border-gray-300 text-gray-900 focus:ring-green-500"
                 }`}
@@ -351,15 +355,15 @@ const CarbonFootprintCalculator = () => {
           {/* Submit Button */}
           <motion.button
             type="submit"
-            disabled={loading}
+            disabled={carbonCalcLoading}
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
             variants={fadeInUp}
             className={`w-full py-3 rounded-lg font-semibold text-lg shadow-md transition-all duration-300 bg-gradient-to-r from-green-500 to-blue-500 hover:from-green-600 hover:to-blue-600 text-white flex items-center justify-center gap-2 ${
-              loading ? "opacity-50 cursor-not-allowed" : ""
+              carbonCalcLoading ? "opacity-50 cursor-not-allowed" : ""
             }`}
           >
-            Calculate Footprint
+            {carbonCalcLoading ? "Calculating..." : "Calculate Footprint"}
           </motion.button>
         </motion.form>
 
@@ -367,7 +371,11 @@ const CarbonFootprintCalculator = () => {
         {error && (
           <motion.div
             variants={fadeInUp}
-            className="mt-6 p-4 rounded-lg bg-red-50 dark:bg-red-900/50 text-red-600 dark:text-red-400 flex items-center justify-center gap-2 max-w-2xl mx-auto"
+            className={`mt-6 p-4 rounded-lg flex items-center justify-center gap-2 ${
+              currentTheme === "dark"
+                ? "bg-red-900/50 text-red-400"
+                : "bg-red-50 text-red-600"
+            } max-w-2xl mx-auto`}
           >
             <AlertTriangle size={20} />
             <p>{error}</p>
@@ -380,7 +388,11 @@ const CarbonFootprintCalculator = () => {
             variants={staggerChildren}
             initial="initial"
             animate="animate"
-            className="mt-8 max-w-2xl mx-auto bg-card dark:bg-gray-900 p-8 rounded-xl shadow-lg border border-gray-200 dark:border-gray-800 backdrop-blur-lg"
+            className={`mt-8 max-w-2xl mx-auto p-8 rounded-xl shadow-lg border backdrop-blur-lg ${
+              currentTheme === "dark"
+                ? "bg-gray-900 border-gray-800"
+                : "bg-green-50 border-gray-200"
+            }`}
           >
             <motion.h3
               variants={fadeInUp}
@@ -392,13 +404,15 @@ const CarbonFootprintCalculator = () => {
               <motion.div
                 variants={fadeInUp}
                 className={`p-4 rounded-lg ${
-                  theme === "dark" ? "bg-gray-800" : "bg-muted"
+                  currentTheme === "dark" ? "bg-gray-800" : "bg-gray-100"
                 } flex items-center gap-3`}
               >
                 <Car className="w-8 h-8 text-green-500" />
                 <div>
-                  <p className="font-semibold">Travel</p>
-                  <p className="text-sm text-muted-foreground dark:text-gray-300">
+                  <p className="font-semibold text-gray-900 dark:text-gray-200">
+                    Travel
+                  </p>
+                  <p className="text-sm text-gray-600 dark:text-gray-300">
                     {result.travel_emission.toFixed(2)} kg CO₂
                   </p>
                 </div>
@@ -406,13 +420,15 @@ const CarbonFootprintCalculator = () => {
               <motion.div
                 variants={fadeInUp}
                 className={`p-4 rounded-lg ${
-                  theme === "dark" ? "bg-gray-800" : "bg-muted"
+                  currentTheme === "dark" ? "bg-gray-800" : "bg-gray-100"
                 } flex items-center gap-3`}
               >
                 <Zap className="w-8 h-8 text-green-500" />
                 <div>
-                  <p className="font-semibold">Energy</p>
-                  <p className="text-sm text-muted-foreground dark:text-gray-300">
+                  <p className="font-semibold text-gray-900 dark:text-gray-200">
+                    Energy
+                  </p>
+                  <p className="text-sm text-gray-600 dark:text-gray-300">
                     {result.energy_emission.toFixed(2)} kg CO₂
                   </p>
                 </div>
@@ -420,13 +436,15 @@ const CarbonFootprintCalculator = () => {
               <motion.div
                 variants={fadeInUp}
                 className={`p-4 rounded-lg ${
-                  theme === "dark" ? "bg-gray-800" : "bg-muted"
+                  currentTheme === "dark" ? "bg-gray-800" : "bg-gray-100"
                 } flex items-center gap-3`}
               >
                 <Utensils className="w-8 h-8 text-green-500" />
                 <div>
-                  <p className="font-semibold">Food</p>
-                  <p className="text-sm text-muted-foreground dark:text-gray-300">
+                  <p className="font-semibold text-gray-900 dark:text-gray-200">
+                    Food
+                  </p>
+                  <p className="text-sm text-gray-600 dark:text-gray-300">
                     {result.food_emission.toFixed(2)} kg CO₂
                   </p>
                 </div>
@@ -434,13 +452,15 @@ const CarbonFootprintCalculator = () => {
               <motion.div
                 variants={fadeInUp}
                 className={`p-4 rounded-lg ${
-                  theme === "dark" ? "bg-gray-800" : "bg-muted"
+                  currentTheme === "dark" ? "bg-gray-800" : "bg-gray-100"
                 } flex items-center gap-3`}
               >
                 <ShoppingBag className="w-8 h-8 text-green-500" />
                 <div>
-                  <p className="font-semibold">Shopping</p>
-                  <p className="text-sm text-muted-foreground dark:text-gray-300">
+                  <p className="font-semibold text-gray-900 dark:text-gray-200">
+                    Shopping
+                  </p>
+                  <p className="text-sm text-gray-600 dark:text-gray-300">
                     {result.shopping_emission.toFixed(2)} kg CO₂
                   </p>
                 </div>
@@ -448,15 +468,15 @@ const CarbonFootprintCalculator = () => {
             </div>
             <motion.button
               onClick={getRecommendations}
-              disabled={loading}
+              disabled={recommendationsLoading}
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
               variants={fadeInUp}
               className={`mt-6 w-full py-3 rounded-lg font-semibold text-lg shadow-md transition-all duration-300 bg-gradient-to-r from-green-500 to-blue-500 hover:from-green-600 hover:to-blue-600 text-white ${
-                loading ? "opacity-50 cursor-not-allowed" : ""
+                recommendationsLoading ? "opacity-50 cursor-not-allowed" : ""
               }`}
             >
-              {loading ? "Loading..." : "Get Recommendations"}
+              {recommendationsLoading ? "Loading..." : "Get Recommendations"}
             </motion.button>
           </motion.div>
         )}
@@ -467,7 +487,11 @@ const CarbonFootprintCalculator = () => {
             variants={staggerChildren}
             initial="initial"
             animate="animate"
-            className="mt-8 max-w-2xl mx-auto bg-green-50 dark:bg-gray-900 p-8 rounded-xl shadow-lg border border-gray-200 dark:border-gray-800"
+            className={`mt-8 max-w-2xl mx-auto p-8 rounded-xl shadow-lg border backdrop-blur-lg ${
+              currentTheme === "dark"
+                ? "bg-gray-900 border-gray-800"
+                : "bg-green-50 border-gray-200"
+            }`}
           >
             <motion.h3
               variants={fadeInUp}
@@ -479,14 +503,16 @@ const CarbonFootprintCalculator = () => {
               <motion.div
                 variants={fadeInUp}
                 className={`p-4 rounded-lg ${
-                  theme === "dark" ? "bg-gray-800" : "bg-muted"
+                  currentTheme === "dark" ? "bg-gray-800" : "bg-gray-100"
                 }`}
               >
                 <div className="flex items-center gap-3 mb-2">
                   <Car className="w-6 h-6 text-green-500" />
-                  <h4 className="font-semibold">Travel</h4>
+                  <h4 className="font-semibold text-gray-900 dark:text-gray-200">
+                    Travel
+                  </h4>
                 </div>
-                <ul className="list-disc pl-5 text-sm text-muted-foreground dark:text-gray-300">
+                <ul className="list-disc pl-5 text-sm text-gray-600 dark:text-gray-300">
                   {recommendations.travel.map((tip, idx) => (
                     <li key={idx}>{tip}</li>
                   ))}
@@ -495,14 +521,16 @@ const CarbonFootprintCalculator = () => {
               <motion.div
                 variants={fadeInUp}
                 className={`p-4 rounded-lg ${
-                  theme === "dark" ? "bg-gray-800" : "bg-muted"
+                  currentTheme === "dark" ? "bg-gray-800" : "bg-gray-100"
                 }`}
               >
                 <div className="flex items-center gap-3 mb-2">
                   <Zap className="w-6 h-6 text-green-500" />
-                  <h4 className="font-semibold">Energy</h4>
+                  <h4 className="font-semibold text-gray-900 dark:text-gray-200">
+                    Energy
+                  </h4>
                 </div>
-                <ul className="list-disc pl-5 text-sm text-muted-foreground dark:text-gray-300">
+                <ul className="list-disc pl-5 text-sm text-gray-600 dark:text-gray-300">
                   {recommendations.energy.map((tip, idx) => (
                     <li key={idx}>{tip}</li>
                   ))}
@@ -511,14 +539,16 @@ const CarbonFootprintCalculator = () => {
               <motion.div
                 variants={fadeInUp}
                 className={`p-4 rounded-lg ${
-                  theme === "dark" ? "bg-gray-800" : "bg-muted"
+                  currentTheme === "dark" ? "bg-gray-800" : "bg-gray-100"
                 }`}
               >
                 <div className="flex items-center gap-3 mb-2">
                   <Utensils className="w-6 h-6 text-green-500" />
-                  <h4 className="font-semibold">Food</h4>
+                  <h4 className="font-semibold text-gray-900 dark:text-gray-200">
+                    Food
+                  </h4>
                 </div>
-                <ul className="list-disc pl-5 text-sm text-muted-foreground dark:text-gray-300">
+                <ul className="list-disc pl-5 text-sm text-gray-600 dark:text-gray-300">
                   {recommendations.food.map((tip, idx) => (
                     <li key={idx}>{tip}</li>
                   ))}
@@ -527,14 +557,16 @@ const CarbonFootprintCalculator = () => {
               <motion.div
                 variants={fadeInUp}
                 className={`p-4 rounded-lg ${
-                  theme === "dark" ? "bg-gray-800" : "bg-muted"
+                  currentTheme === "dark" ? "bg-gray-800" : "bg-gray-100"
                 }`}
               >
                 <div className="flex items-center gap-3 mb-2">
                   <ShoppingBag className="w-6 h-6 text-green-500" />
-                  <h4 className="font-semibold">Shopping</h4>
+                  <h4 className="font-semibold text-gray-900 dark:text-gray-200">
+                    Shopping
+                  </h4>
                 </div>
-                <ul className="list-disc pl-5 text-sm text-muted-foreground dark:text-gray-300">
+                <ul className="list-disc pl-5 text-sm text-gray-600 dark:text-gray-300">
                   {recommendations.shopping.map((tip, idx) => (
                     <li key={idx}>{tip}</li>
                   ))}
