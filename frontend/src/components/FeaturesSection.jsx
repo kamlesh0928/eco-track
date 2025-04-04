@@ -1,6 +1,7 @@
 import { motion } from "framer-motion";
 import FeatureCard from "./FeatureCard";
 import { Wind, Car, Recycle, Sun, Sprout, Droplet } from "lucide-react";
+import { useCustomTheme } from "../hooks/useTheme"; // Replaced useTheme with useCustomTheme
 
 // Variants for animating feature cards with staggered delays
 const featureVariants = {
@@ -13,7 +14,8 @@ const featureVariants = {
 };
 
 const FeaturesSection = () => {
-  // List of features with icons, titles, and descriptions
+  const { currentTheme } = useCustomTheme(); // Changed to currentTheme
+
   const features = [
     {
       icon: Wind,
@@ -46,37 +48,44 @@ const FeaturesSection = () => {
     {
       icon: Droplet,
       title: "Water Conservation",
-      description: "Reduce waste and protect water supplies with innovative tracking.",
+      description:
+        "Reduce waste and protect water supplies with innovative tracking.",
     },
   ];
 
   return (
-    <section id="features" className="py-24 bg-muted/50 dark:bg-gray-950">
+    <section
+      id="features"
+      className={`py-8 ${
+        currentTheme === "dark"
+          ? "bg-gray-950 border-gray-800"
+          : "bg-green-50 border-gray-200"
+      } rounded-xl shadow-md border`}
+    >
       <div className="container mx-auto px-6 text-center">
-        {/* Section Heading with animation */}
         <motion.h2
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, ease: "easeOut" }}
           viewport={{ once: false, amount: 0.2 }}
-          className="text-4xl md:text-5xl font-bold mb-6"
+          className={`text-4xl md:text-5xl font-bold mb-6 ${
+            currentTheme === "dark" ? "text-green-400" : "text-green-600"
+          }`}
         >
           Sustainable Features
         </motion.h2>
 
-        {/* Section Description */}
         <motion.p
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, ease: "easeOut" }}
           viewport={{ once: false, amount: 0.2 }}
-          className="text-lg text-muted-foreground mb-12 max-w-2xl mx-auto"
+          className="text-lg text-gray-600 dark:text-gray-300 mb-12 max-w-2xl mx-auto"
         >
           Discover tools designed to help you live sustainably and reduce your
           environmental impact.
         </motion.p>
 
-        {/* Features Grid with staggered animations */}
         <motion.div
           className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
           initial="hidden"
@@ -86,11 +95,9 @@ const FeaturesSection = () => {
           {features.map((feature, index) => (
             <motion.div
               key={feature.title}
-              custom={index} // Pass index for staggered delay
-              variants={featureVariants} // Apply animation variant
-              
+              custom={index}
+              variants={featureVariants}
             >
-              {/* Feature Card Component */}
               <FeatureCard {...feature} />
             </motion.div>
           ))}
