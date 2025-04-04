@@ -1,7 +1,6 @@
-// src/pages/ActivityTracking.jsx
 import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { useTheme } from "next-themes";
+import { useCustomTheme } from "../hooks/useTheme";
 import { Link } from "react-router-dom";
 import {
   User,
@@ -93,7 +92,7 @@ const achievementsData = [
 
 // Activity Tracking Component
 const ActivityTracking = () => {
-  const { theme } = useTheme();
+  const { currentTheme } = useCustomTheme();
   const [mounted, setMounted] = useState(false);
   const [isSidebarExpanded, setIsSidebarExpanded] = useState(true);
   const [ecoScore, setEcoScore] = useState(80);
@@ -160,9 +159,8 @@ const ActivityTracking = () => {
 
   if (!mounted) return null;
 
-  const isDarkMode = theme === "dark";
+  const isDarkMode = currentTheme === "dark";
 
-  // Calculate total impact
   const totalImpact = activities.reduce(
     (acc, activity) => {
       if (activity.impact.co2Saved) acc.co2Saved += activity.impact.co2Saved;
@@ -203,7 +201,6 @@ const ActivityTracking = () => {
     setEcoScore((prev) => Math.min(100, prev + qty * 0.1));
   };
 
-  // Log waste reduction
   const logWasteReduction = (qty) => {
     const newEntry = {
       id: Date.now(),
@@ -228,17 +225,15 @@ const ActivityTracking = () => {
   return (
     <div
       className={`min-h-screen mt-16 ${
-        isDarkMode
-          ? "bg-gray-900 text-white"
-          : "bg-gradient-to-br from-emerald-50 via-emerald-100 to-cyan-100 text-gray-900"
-      } flex flex-col md:flex-row overflow-x-hidden relative bg-center bg-opacity-20`}
+        isDarkMode ? "bg-gray-950" : "bg-white"
+      } flex flex-col md:flex-row overflow-x-hidden relative`}
     >
       {/* Sidebar */}
       <motion.div
         className={`w-full md:w-64 lg:w-72 ${
           isDarkMode
             ? "bg-gray-800/90"
-            : "bg-gradient-to-b from-green-500/90 to-emerald-500/90"
+            : "bg-gradient-to-b from-green-700 to-emerald-500"
         } border-b md:border-r p-3 sm:p-4 md:p-6 flex flex-col gap-3 sm:gap-4 md:gap-6 md:h-screen md:sticky md:top-0 transition-all duration-300 backdrop-blur-md`}
         initial={{ height: "auto" }}
         animate={{ height: isSidebarExpanded ? "auto" : "60px" }}
@@ -327,7 +322,11 @@ const ActivityTracking = () => {
         <div
           className={`${
             isSidebarExpanded ? "block" : "hidden md:block"
-          } mt-auto`}
+          } mt-auto ${
+            isDarkMode
+              ? "bg-gray-700"
+              : "bg-emerald-900"
+          }`}
         >
           <div className="p-3 sm:p-4 rounded-lg bg-white/20 text-white">
             <p className="text-xs sm:text-sm font-medium">EcoScore</p>
@@ -343,7 +342,7 @@ const ActivityTracking = () => {
               {treesPlanted}
             </p>
             <p className="text-xs sm:text-sm font-medium mt-2">Progress</p>
-            <div className="w-full bg-gray-200 rounded-full h-2.5 mt-1">
+            <div className="w-full bg-gray-300 rounded-full h-2.5 mt-1">
               <motion.div
                 className="bg-green-500 h-2.5 rounded-full"
                 initial={{ width: 0 }}
@@ -356,7 +355,11 @@ const ActivityTracking = () => {
       </motion.div>
 
       {/* Main Content */}
-      <div className="flex-1 p-3 sm:p-4 md:p-6 overflow-y-auto bg-white/80 dark:bg-gray-900/80 backdrop-blur-md">
+      <div
+        className={`flex-1 p-3 sm:p-4 md:p-6 overflow-y-auto ${
+          isDarkMode ? "bg-gray-950" : "bg-white"
+        } backdrop-blur-md`}
+      >
         {/* Header */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -380,8 +383,8 @@ const ActivityTracking = () => {
           <div
             className={`p-4 sm:p-6 rounded-xl ${
               isDarkMode
-                ? "bg-gray-800 border-gray-700"
-                : "bg-white border-gray-200"
+                ? "bg-gray-900 border-gray-700"
+                : "bg-green-50 border-gray-200"
             } border shadow-md hover:shadow-lg transition-shadow duration-300`}
           >
             <h2 className="text-lg sm:text-xl font-semibold mb-4 flex items-center gap-2 text-green-500 dark:text-green-400">
@@ -435,8 +438,8 @@ const ActivityTracking = () => {
           <div
             className={`p-4 sm:p-6 rounded-xl ${
               isDarkMode
-                ? "bg-gray-800 border-gray-700"
-                : "bg-white border-gray-200"
+                ? "bg-gray-900 border-gray-700"
+                : "bg-green-50 border-gray-200"
             } border shadow-md hover:shadow-lg transition-shadow duration-300`}
           >
             <h2 className="text-lg sm:text-xl font-semibold mb-4 flex items-center gap-2 text-green-500 dark:text-green-400">
@@ -495,8 +498,8 @@ const ActivityTracking = () => {
           <div
             className={`p-4 sm:p-6 rounded-xl ${
               isDarkMode
-                ? "bg-gray-800 border-gray-700"
-                : "bg-white border-gray-200"
+                ? "bg-gray-900 border-gray-700"
+                : "bg-green-50 border-gray-200"
             } border shadow-md hover:shadow-lg transition-shadow duration-300`}
           >
             <h2 className="text-lg sm:text-xl font-semibold mb-4 flex items-center gap-2 text-green-500 dark:text-green-400">
@@ -576,7 +579,7 @@ const ActivityTracking = () => {
             className={`p-4 sm:p-6 rounded-xl ${
               isDarkMode
                 ? "bg-gray-800 border-gray-700"
-                : "bg-white border-gray-200"
+                : "bg-green-50 border-gray-200"
             } border shadow-md hover:shadow-lg transition-shadow duration-300`}
           >
             <h2 className="text-lg sm:text-xl font-semibold mb-4 flex items-center gap-2 text-green-500 dark:text-green-400">
@@ -632,7 +635,7 @@ const ActivityTracking = () => {
             className={`p-4 sm:p-6 rounded-xl ${
               isDarkMode
                 ? "bg-gray-800 border-gray-700"
-                : "bg-white border-gray-200"
+                : "bg-green-50 border-gray-200"
             } border shadow-md hover:shadow-lg transition-shadow duration-300`}
           >
             <h2 className="text-lg sm:text-xl font-semibold mb-4 flex items-center gap-2 text-green-500 dark:text-green-400">
@@ -703,7 +706,7 @@ const ActivityTracking = () => {
             className={`p-4 sm:p-6 rounded-xl ${
               isDarkMode
                 ? "bg-gray-800 border-gray-700"
-                : "bg-white border-gray-200"
+                : "bg-green-50 border-gray-200"
             } border shadow-md hover:shadow-lg transition-shadow duration-300`}
           >
             <h2 className="text-lg sm:text-xl font-semibold mb-4 flex items-center gap-2 text-green-500 dark:text-green-400">
@@ -717,7 +720,7 @@ const ActivityTracking = () => {
                     user.name === "You"
                       ? isDarkMode
                         ? "bg-green-700"
-                        : "bg-green-100"
+                        : "bg-green-200"
                       : isDarkMode
                       ? "bg-gray-700"
                       : "bg-gray-100"
@@ -754,7 +757,7 @@ const ActivityTracking = () => {
           </div>
         </motion.div>
 
-        {/* Goals Section */}
+        {/* Set a New Goal */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -765,7 +768,7 @@ const ActivityTracking = () => {
             className={`p-4 sm:p-6 rounded-xl ${
               isDarkMode
                 ? "bg-gray-800 border-gray-700"
-                : "bg-white border-gray-200"
+                : "bg-green-50 border-gray-200"
             } border shadow-md hover:shadow-lg transition-shadow duration-300`}
           >
             <h2 className="text-lg sm:text-xl font-semibold mb-4 flex items-center gap-2 text-green-500 dark:text-green-400">
@@ -799,20 +802,22 @@ const ActivityTracking = () => {
                 className={`flex-1 px-3 sm:px-4 py-2 rounded-lg border ${
                   isDarkMode
                     ? "bg-gray-700 border-gray-600 text-white"
-                    : "bg-white border-gray-300 text-gray-900"
+                    : "bg-gray-100 border-gray-300 text-gray-900"
                 } focus:ring-2 focus:ring-green-500 focus:border-transparent text-sm sm:text-base`}
               />
               <input
                 type="number"
                 placeholder="Target"
                 value={newGoal.target}
+                min={0}
+                max={15}
                 onChange={(e) =>
                   setNewGoal({ ...newGoal, target: e.target.value })
                 }
                 className={`w-full sm:w-24 px-3 sm:px-4 py-2 rounded-lg border ${
                   isDarkMode
                     ? "bg-gray-700 border-gray-600 text-white"
-                    : "bg-white border-gray-300 text-gray-900"
+                    : "bg-gray-100 border-gray-300 text-gray-900"
                 } focus:ring-2 focus:ring-green-500 focus:border-transparent text-sm sm:text-base`}
               />
               <motion.button
@@ -831,6 +836,7 @@ const ActivityTracking = () => {
           </div>
         </motion.div>
 
+        {/*  Active Goals */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -841,7 +847,7 @@ const ActivityTracking = () => {
             className={`p-4 sm:p-6 rounded-xl ${
               isDarkMode
                 ? "bg-gray-800 border-gray-700"
-                : "bg-white border-gray-200"
+                : "bg-green-50 border-gray-200"
             } border shadow-md hover:shadow-lg transition-shadow duration-300`}
           >
             <h2 className="text-lg sm:text-xl font-semibold mb-4 flex items-center gap-2 text-green-500 dark:text-green-400">
@@ -853,7 +859,7 @@ const ActivityTracking = () => {
                   <p className="text-xs sm:text-sm font-medium text-gray-900 dark:text-white">
                     {goal.name}
                   </p>
-                  <div className="w-full bg-gray-200 dark:bg-gray-600 rounded-full h-2.5 mt-1">
+                  <div className="w-full bg-gray-300 dark:bg-gray-600 rounded-full h-2.5 mt-1">
                     <div
                       className="bg-green-500 h-2.5 rounded-full"
                       style={{
@@ -904,7 +910,7 @@ const ActivityTracking = () => {
             className={`p-4 sm:p-6 rounded-xl ${
               isDarkMode
                 ? "bg-gray-800 border-gray-700"
-                : "bg-white border-gray-200"
+                : "bg-green-50 border-gray-200"
             } border shadow-md hover:shadow-lg transition-shadow duration-300`}
           >
             <h2 className="text-lg sm:text-xl font-semibold mb-4 flex items-center gap-2 text-green-500 dark:text-green-400">
@@ -928,7 +934,6 @@ const ActivityTracking = () => {
           </div>
         </motion.div>
 
-        {/* Zero-Waste Tracker */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -939,7 +944,7 @@ const ActivityTracking = () => {
             className={`p-4 sm:p-6 rounded-xl ${
               isDarkMode
                 ? "bg-gray-800 border-gray-700"
-                : "bg-white border-gray-200"
+                : "bg-green-50 border-gray-200"
             } border shadow-md hover:shadow-lg transition-shadow duration-300`}
           >
             <h2 className="text-lg sm:text-xl font-semibold mb-4 flex items-center gap-2 text-green-500 dark:text-green-400">
@@ -984,7 +989,7 @@ const ActivityTracking = () => {
             className={`p-4 sm:p-6 rounded-xl ${
               isDarkMode
                 ? "bg-gray-800 border-gray-700"
-                : "bg-white border-gray-200"
+                : "bg-green-50 border-gray-200"
             } border shadow-md hover:shadow-lg transition-shadow duration-300`}
           >
             <h2 className="text-lg sm:text-xl font-semibold mb-4 flex items-center gap-2 text-green-500 dark:text-green-400">
@@ -1005,8 +1010,8 @@ const ActivityTracking = () => {
                           ? "bg-gray-700"
                           : "bg-gray-100"
                         : isDarkMode
-                        ? "bg-gray-600 opacity-50"
-                        : "bg-gray-200 opacity-50"
+                        ? "bg-gray-600 opacity-80"
+                        : "bg-gray-200 opacity-80"
                     } hover:bg-opacity-80 transition-all duration-300`}
                     whileHover={{ scale: 1.02 }}
                   >
@@ -1019,7 +1024,7 @@ const ActivityTracking = () => {
                       className={`text-xs sm:text-sm font-medium ${
                         isUnlocked
                           ? "text-gray-900 dark:text-white"
-                          : "text-gray-500 dark:text-gray-400"
+                          : "text-gray-700 dark:text-gray-200"
                       }`}
                     >
                       {achievement.name}
@@ -1028,7 +1033,7 @@ const ActivityTracking = () => {
                       className={`text-xs ${
                         isUnlocked
                           ? "text-gray-600 dark:text-gray-400"
-                          : "text-gray-400 dark:text-gray-500"
+                          : "text-gray-600 dark:text-gray-300"
                       }`}
                     >
                       {achievement.description}
