@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 import { motion } from "framer-motion";
-import { MapPin, Leaf, Send, Sun, Moon } from "lucide-react";
+import { MapPin, Leaf, Send } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import { useTheme } from "next-themes";
+import { useCustomTheme } from "../hooks/useTheme";
 import { auth, db } from "../services/firebase";
 import { doc, setDoc } from "firebase/firestore";
 
@@ -13,21 +13,16 @@ const fadeInUp = {
 };
 
 const staggerChildren = {
-  animate: {
-    transition: {
-      staggerChildren: 0.1,
-    },
-  },
+  animate: { transition: { staggerChildren: 0.1 } },
 };
 
 const LocationPage = () => {
-  const { theme, setTheme } = useTheme();
+  const { currentTheme } = useCustomTheme();
   const [city, setCity] = useState("");
   const [state, setState] = useState("");
   const [country, setCountry] = useState("");
   const navigate = useNavigate();
 
-  // Handle form submission with validation
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!city || !state || !country) {
@@ -46,7 +41,11 @@ const LocationPage = () => {
 
     try {
       // Save location data to Firestore under the user's document
-      await setDoc(doc(db, "users", user.uid), { location: locationData }, { merge: true });
+      await setDoc(
+        doc(db, "users", user.uid),
+        { location: locationData },
+        { merge: true }
+      );
       navigate("/features");
     } catch (error) {
       console.error("Error saving location data:", error);
@@ -57,38 +56,16 @@ const LocationPage = () => {
   return (
     <div
       className={`min-h-screen pt-20 mb-8 ${
-        theme === "dark" ? "bg-gray-950 text-gray-100" : "bg-white text-black"
+        currentTheme === "dark" ? "bg-gray-950" : "bg-white"
       }`}
     >
       <div className="max-w-8xl container mx-auto px-6 sm:px-6 lg:px-8">
-        {/* Dark Mode Toggle */}
-        <motion.div
-          className="fixed top-5 right-5 z-20"
-          whileHover={{ scale: 1.1 }}
-          whileTap={{ scale: 0.9 }}
-        >
-          <button
-            onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
-            className={`p-2.5 rounded-full shadow-lg transition-all duration-300 ${
-              theme === "dark"
-                ? "bg-gray-800 hover:bg-gray-700"
-                : "bg-gray-200 hover:bg-gray-300"
-            }`}
-          >
-            {theme === "dark" ? (
-              <Sun size={28} className="text-yellow-400 animate-pulse" />
-            ) : (
-              <Moon size={28} className="text-green-500 animate-spin" />
-            )}
-          </button>
-        </motion.div>
-
         {/* Hero Section */}
         <motion.div
           {...fadeInUp}
           className="mb-12 text-center relative overflow-hidden py-16"
         >
-          <div className="absolute inset-0 bg-gradient-to-br from-green-400/20 via-blue-500/20 to-purple-600/20 -z-10" />
+          <div className="absolute rounded-lg inset-0 bg-gradient-to-br from-green-400/20 via-blue-500/20 to-purple-600/20 -z-10" />
           {[...Array(20)].map((_, i) => (
             <motion.div
               key={i}
@@ -111,7 +88,7 @@ const LocationPage = () => {
           <h1 className="text-5xl md:text-6xl font-extrabold mb-4 bg-gradient-to-r from-green-400 to-blue-500 bg-clip-text text-transparent">
             Set Your Eco Location
           </h1>
-          <p className="text-xl text-muted-foreground dark:text-gray-300 max-w-3xl mx-auto">
+          <p className="text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto">
             Pinpoint your location to unlock a world of personalized
             sustainability insights, tailored eco-actions, and a deeper
             connection with your local environment. Join the EcoTrack community
@@ -125,13 +102,15 @@ const LocationPage = () => {
           initial="initial"
           animate="animate"
           onSubmit={handleSubmit}
-          className={`max-w-md mx-auto p-8 rounded-xl shadow-lg border border-gray-200 dark:border-gray-800 backdrop-blur-lg ${
-            theme === "dark" ? "bg-gray-900" : "bg-card"
+          className={`max-w-md mx-auto p-8 rounded-xl shadow-lg border backdrop-blur-lg ${
+            currentTheme === "dark"
+              ? "bg-gray-900 border-gray-800"
+              : "bg-green-50 border-gray-200"
           }`}
         >
           <motion.h2
             variants={fadeInUp}
-            className="text-3xl font-semibold mb-6 text-center text-green-600 dark:text-green-400 flex items-center justify-center gap-3"
+            className="text-3xl font-semibold mb-6 text-center text-green-500 dark:text-green-400 flex items-center justify-center gap-3"
           >
             <Leaf size={32} className="text-green-500 animate-pulse" />
             Locate Your Green Path
@@ -139,11 +118,7 @@ const LocationPage = () => {
 
           {/* City Input */}
           <motion.div variants={fadeInUp} className="mb-6">
-            <label
-              className={`block text-sm font-medium mb-2 ${
-                theme === "dark" ? "text-gray-200" : "text-gray-700"
-              }`}
-            >
+            <label className="block text-sm font-medium mb-2 text-black dark:text-gray-200">
               City
             </label>
             <div className="relative">
@@ -152,7 +127,7 @@ const LocationPage = () => {
                 value={city}
                 onChange={(e) => setCity(e.target.value)}
                 className={`w-full px-4 py-3 rounded-lg border-2 focus:outline-none focus:ring-2 transition-all duration-300 ${
-                  theme === "dark"
+                  currentTheme === "dark"
                     ? "bg-gray-800 border-gray-700 text-gray-100 focus:ring-green-500"
                     : "bg-white border-gray-300 text-gray-900 focus:ring-green-500"
                 }`}
@@ -164,11 +139,7 @@ const LocationPage = () => {
 
           {/* State Input */}
           <motion.div variants={fadeInUp} className="mb-6">
-            <label
-              className={`block text-sm font-medium mb-2 ${
-                theme === "dark" ? "text-gray-200" : "text-gray-700"
-              }`}
-            >
+            <label className="block text-sm font-medium mb-2 text-black dark:text-gray-200">
               State / Region
             </label>
             <div className="relative">
@@ -177,7 +148,7 @@ const LocationPage = () => {
                 value={state}
                 onChange={(e) => setState(e.target.value)}
                 className={`w-full px-4 py-3 rounded-lg border-2 focus:outline-none focus:ring-2 transition-all duration-300 ${
-                  theme === "dark"
+                  currentTheme === "dark"
                     ? "bg-gray-800 border-gray-700 text-gray-100 focus:ring-green-500"
                     : "bg-white border-gray-300 text-gray-900 focus:ring-green-500"
                 }`}
@@ -189,11 +160,7 @@ const LocationPage = () => {
 
           {/* Country Input */}
           <motion.div variants={fadeInUp} className="mb-8">
-            <label
-              className={`block text-sm font-medium mb-2 ${
-                theme === "dark" ? "text-gray-200" : "text-gray-700"
-              }`}
-            >
+            <label className="block text-sm font-medium mb-2 text-black dark:text-gray-200">
               Country
             </label>
             <div className="relative">
@@ -202,7 +169,7 @@ const LocationPage = () => {
                 value={country}
                 onChange={(e) => setCountry(e.target.value)}
                 className={`w-full px-4 py-3 rounded-lg border-2 focus:outline-none focus:ring-2 transition-all duration-300 ${
-                  theme === "dark"
+                  currentTheme === "dark"
                     ? "bg-gray-800 border-gray-700 text-gray-100 focus:ring-green-500"
                     : "bg-white border-gray-300 text-gray-900 focus:ring-green-500"
                 }`}
@@ -218,7 +185,7 @@ const LocationPage = () => {
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
             variants={fadeInUp}
-            className={`w-full py-3 rounded-lg font-semibold text-lg shadow-md transition-all duration-300 bg-gradient-to-r from-green-500 to-blue-500 hover:from-green-600 hover:to-blue-600 text-white flex items-center justify-center gap-2`}
+            className="w-full py-3 rounded-lg font-semibold text-lg shadow-md transition-all duration-300 bg-gradient-to-r from-green-500 to-blue-500 hover:from-green-600 hover:to-blue-600 text-white flex items-center justify-center gap-2"
           >
             <Send size={20} /> Save Location
           </motion.button>
@@ -229,17 +196,21 @@ const LocationPage = () => {
           variants={staggerChildren}
           initial="initial"
           animate="animate"
-          className="bg-card dark:bg-gray-900 p-8 rounded-xl shadow-lg border border-gray-200 dark:border-gray-800 backdrop-blur-lg mt-12 mb-12"
+          className={`${
+            currentTheme === "dark"
+              ? "bg-gray-900 border-gray-800"
+              : "bg-green-50 border-gray-200"
+          } p-8 rounded-xl shadow-lg border backdrop-blur-lg mt-12 mb-12`}
         >
           <motion.h2
             variants={fadeInUp}
-            className="text-3xl font-semibold mb-6 text-center text-green-600 dark:text-green-400"
+            className="text-3xl font-semibold mb-6 text-center text-green-500 dark:text-green-400"
           >
             Why Your Location Matters
           </motion.h2>
           <motion.p
             variants={fadeInUp}
-            className="text-lg text-muted-foreground dark:text-gray-300 mb-8 text-center max-w-2xl mx-auto"
+            className="text-lg text-gray-600 dark:text-gray-300 mb-8 text-center max-w-2xl mx-auto"
           >
             Your geographic location is the foundation of your eco-journey with
             EcoTrack. By setting it, you enable us to provide hyper-localized
@@ -251,15 +222,15 @@ const LocationPage = () => {
             <motion.div
               variants={fadeInUp}
               className={`p-6 rounded-lg ${
-                theme === "dark" ? "bg-gray-800" : "bg-muted"
+                currentTheme === "dark" ? "bg-gray-800" : "bg-gray-100"
               } flex items-start`}
             >
               <MapPin className="w-8 h-8 text-green-500 mr-4 flex-shrink-0" />
               <div>
-                <h3 className="text-lg font-semibold mb-2">
+                <h3 className="text-lg font-semibold mb-2 text-black dark:text-gray-100">
                   Localized Insights
                 </h3>
-                <p className="text-sm text-muted-foreground dark:text-gray-300">
+                <p className="text-sm text-gray-600 dark:text-gray-300">
                   Receive data tailored to your city’s climate, pollution
                   levels, and eco-challenges.
                 </p>
@@ -268,13 +239,15 @@ const LocationPage = () => {
             <motion.div
               variants={fadeInUp}
               className={`p-6 rounded-lg ${
-                theme === "dark" ? "bg-gray-800" : "bg-muted"
+                currentTheme === "dark" ? "bg-gray-800" : "bg-gray-100"
               } flex items-start`}
             >
               <Leaf className="w-8 h-8 text-green-500 mr-4 flex-shrink-0" />
               <div>
-                <h3 className="text-lg font-semibold mb-2">Regional Actions</h3>
-                <p className="text-sm text-muted-foreground dark:text-gray-300">
+                <h3 className="text-lg font-semibold mb-2 text-black dark:text-gray-100">
+                  Regional Actions
+                </h3>
+                <p className="text-sm text-gray-600 dark:text-gray-300">
                   Engage in sustainability projects specific to your state or
                   country.
                 </p>
@@ -286,17 +259,15 @@ const LocationPage = () => {
         {/* Privacy & Info Section */}
         <motion.div
           variants={fadeInUp}
-          className={`mt-10 text-center max-w-lg mx-auto ${
-            theme === "dark" ? "text-gray-300" : "text-gray-600"
-          }`}
+          className="mt-10 text-center max-w-lg mx-auto text-gray-700 dark:text-gray-300"
         >
-          <p className="text-sm leading-relaxed">
+          <p className="text-md leading-relaxed">
             Your location helps us provide precise environmental data for you.
             It’s safeguarded under EcoTrack’s commitment to privacy.
           </p>
           <motion.div
             whileHover={{ scale: 1.05 }}
-            className={`mt-4 inline-flex items-center gap-2 text-xs font-medium text-green-500`}
+            className="mt-4 inline-flex items-center gap-2 text-sm font-medium text-green-500"
           >
             <Leaf size={16} />
             <span>Committed to sustainability and privacy</span>
