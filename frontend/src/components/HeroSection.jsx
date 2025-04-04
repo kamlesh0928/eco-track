@@ -86,7 +86,7 @@ const HeroSection = () => {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 1.2, delay: 0.3 }}
-            className="text-xl md:text-2xl text-muted-foreground mb-8 max-w-3xl mx-auto"
+            className="text-gray-700 text-xl md:text-2xl text-muted-foreground mb-8 max-w-3xl mx-auto"
           >
             Join our eco-friendly community and reduce your carbon footprint
             with AI-powered tracking and sustainable solutions.
