@@ -1,16 +1,23 @@
 import { useState, useCallback } from "react";
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
-import { Mail, Lock, Eye, EyeOff, LogIn, Loader } from "lucide-react";
+import {
+  Mail,
+  Lock,
+  Eye,
+  EyeOff,
+  LogIn,
+  Loader,
+  AlertCircle,
+} from "lucide-react";
 import { FcGoogle } from "react-icons/fc";
 import validator from "validator";
 import { auth } from "../services/firebase";
 import { signInWithEmailAndPassword } from "firebase/auth";
 import { toast } from "react-toastify";
 import handleGoogleAuth from "../services/handleGoogleAuth";
-import { useTheme } from "next-themes";
+import { useCustomTheme } from "../hooks/useTheme";
 
-// Animation Variants
 const fadeInUp = {
   initial: { opacity: 0, y: 20 },
   animate: { opacity: 1, y: 0 },
@@ -37,9 +44,11 @@ const InputField = ({
         type={type}
         value={value}
         onChange={onChange}
-        className={`w-full pl-12 pr-10 py-3 rounded-lg border bg-muted dark:bg-gray-800 text-foreground dark:text-gray-100 border-gray-300 dark:border-gray-700 focus:ring-2 focus:ring-green-500 focus:border-green-500 ${
-          error ? "border-red-500" : ""
-        }`}
+        className={`w-full pl-12 pr-10 py-3 rounded-lg border ${
+          type === "password" && showPasswordToggle ? "pr-16" : ""
+        } ${
+          error ? "border-red-500" : "border-gray-300 dark:border-gray-700"
+        } bg-gray-200 dark:bg-gray-800 text-gray-800 dark:text-gray-100 focus:ring-2 focus:ring-green-500 focus:border-green-500`}
         placeholder={placeholder}
         required={required}
         style={{ lineHeight: "normal" }} // Ensure text is vertically centered
@@ -49,14 +58,19 @@ const InputField = ({
           <button
             type="button"
             onClick={onTogglePassword}
-            className="text-muted-foreground dark:text-gray-400 hover:text-green-500 focus:outline-none"
+            className="text-gray-400 dark:text-gray-400 hover:text-green-500 focus:outline-none"
           >
             {type === "password" ? <EyeOff size={18} /> : <Eye size={18} />}
           </button>
         </div>
       )}
     </div>
-    {error && <p className="text-red-500 text-xs mt-1">{error}</p>}
+    {error && (
+      <div className="flex items-center mt-1 text-red-500 text-sm">
+        <AlertCircle size={14} className="mr-1" />
+        <span>{error}</span>
+      </div>
+    )}
   </div>
 );
 
@@ -66,7 +80,7 @@ const SocialLoginButton = ({ icon, label, onClick, isLoading }) => (
     whileTap={{ scale: 0.95 }}
     onClick={onClick}
     disabled={isLoading}
-    className="flex items-center justify-center w-full py-3 px-4 border rounded-lg bg-card dark:bg-gray-900 text-foreground dark:text-gray-100 hover:bg-muted dark:hover:bg-gray-800 shadow-lg transition-colors"
+    className="flex items-center justify-center w-full py-3 px-4 border rounded-lg bg-gray-100 dark:bg-gray-900 text-gray-800 dark:text-gray-100 hover:bg-gray-200 dark:hover:bg-gray-800 shadow-lg transition-colors"
   >
     {isLoading ? <Loader size={18} className="animate-spin mr-2" /> : icon}
     <span className="ml-2">{label}</span>
@@ -79,78 +93,108 @@ const Login = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [emailError, setEmailError] = useState("");
   const [passwordError, setPasswordError] = useState("");
+  const [formError, setFormError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const { theme } = useTheme();
+  const { currentTheme } = useCustomTheme();
 
   const handleEmailChange = useCallback((e) => {
-    const newEmail = e.target.value;
+    const newEmail = e.target.value.toLowerCase(); // lowercase me convert;
     setEmail(newEmail);
-    setEmailError(validator.isEmail(newEmail) ? "" : "Invalid email address");
+    setEmailError("");
+    setFormError("");
   }, []);
 
   const handlePasswordChange = useCallback((e) => {
     const newPassword = e.target.value;
     setPassword(newPassword);
-    setPasswordError(newPassword.trim() ? "" : "Password is required");
+    setPasswordError("");
+    setFormError("");
   }, []);
+
+  const validateForm = () => {
+    let isValid = true;
+    if (!email) {
+      setEmailError("Email is required");
+      isValid = false;
+    } else if (!validator.isEmail(email)) {
+      setEmailError("Please enter a valid email address");
+      isValid = false;
+    }
+    if (!password) {
+      setPasswordError("Password is required");
+      isValid = false;
+    } else if (password.length < 8) {
+      setPasswordError("Password must be at least 8 characters");
+      isValid = false;
+    }
+    return isValid;
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
-    if (!validator.isEmail(email)) {
-      setEmailError("Invalid email address");
-      return;
-    }
-    if (!password.trim()) {
-      setPasswordError("Password is required");
-      return;
-    }
+    setFormError("");
+    setEmailError("");
+    if (!validateForm()) return;
 
     setIsLoading(true);
-
     try {
       const userCredential = await signInWithEmailAndPassword(
         auth,
         email,
         password
       );
-      const user = userCredential.user;
-
       window.location.href = "/features";
-
-      toast.success("User logged in successfully", {
+      toast.success("Logged in successfully", {
         position: "top-center",
         autoClose: 5000,
         hideProgressBar: false,
         closeOnClick: true,
         pauseOnHover: true,
         draggable: false,
-        progress: undefined,
-        theme: theme === "dark" ? "dark" : "light",
+        theme: currentTheme === "dark" ? "dark" : "light",
       });
     } catch (error) {
-      console.log(error.message);
-      toast.error(error.message, {
-        position: "top-center",
-        autoClose: 5000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: false,
-        progress: undefined,
-        theme: theme === "dark" ? "dark" : "light",
-      });
+      console.error("Login error:", error.code);
+      let errorMessage = "";
+      switch (error.code) {
+        case "auth/invalid-credential":
+          errorMessage = "Incorrect password for this email";
+          setFormError(errorMessage);
+          break;
+        default:
+          errorMessage = "Login failed. Please try again.";
+          setFormError(errorMessage);
+      }
+      if (errorMessage) {
+        toast.error(errorMessage, {
+          position: "top-center",
+          autoClose: 5000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: false,
+          theme: currentTheme === "dark" ? "dark" : "light",
+        });
+      }
     } finally {
       setIsLoading(false);
     }
   };
 
   return (
-    <div className="min-h-screen pt-20 flex items-center justify-center bg-background dark:bg-gray-950">
+    <div
+      className={`min-h-screen pt-20 flex items-center justify-center ${
+        currentTheme === "dark" ? "bg-gray-950" : "bg-gray-50"
+      }`}
+    >
       <div className="max-w-md w-full px-6 py-8">
         <motion.div
           {...fadeInUp}
-          className="bg-card dark:bg-gray-900 p-8 rounded-xl shadow-lg border border-gray-200 dark:border-gray-800 backdrop-blur-lg"
+          className={`${
+            currentTheme === "dark"
+              ? "bg-gray-900 border-gray-800"
+              : "bg-green-50 border-gray-200"
+          } p-8 rounded-xl shadow-lg border backdrop-blur-lg`}
         >
           {/* Header */}
           <div className="text-center mb-8">
@@ -158,7 +202,7 @@ const Login = () => {
               initial={{ opacity: 0, scale: 0.8 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ duration: 0.8, ease: "easeOut" }}
-              className="text-3xl md:text-4xl font-bold text-foreground dark:text-gray-100 mb-2"
+              className="text-3xl md:text-4xl font-bold text-gray-800 dark:text-gray-100 mb-2"
             >
               Welcome Back to <span className="text-green-500">EcoTrack</span>
             </motion.h1>
@@ -166,18 +210,31 @@ const Login = () => {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ duration: 0.8, delay: 0.2 }}
-              className="text-muted-foreground dark:text-gray-300"
+              className="text-gray-600 dark:text-gray-300"
             >
               Log in to continue your journey towards a sustainable future
             </motion.p>
           </div>
+
+          {formError && (
+            <motion.div
+              initial={{ opacity: 0, y: -10 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="mb-6 p-3 bg-red-100 dark:bg-red-900/30 border border-red-200 dark:border-red-800 rounded-lg flex items-center"
+            >
+              <AlertCircle className="text-red-500 mr-2" size={18} />
+              <span className="text-red-700 dark:text-red-300">
+                {formError}
+              </span>
+            </motion.div>
+          )}
 
           {/* Login Form */}
           <form onSubmit={handleSubmit} className="space-y-6">
             {/* Email Field */}
             <div>
               <label
-                className="block text-sm font-medium mb-2 text-foreground dark:text-gray-100"
+                className="block text-sm font-medium mb-2 text-gray-800 dark:text-gray-100"
                 htmlFor="email"
               >
                 Email Address
@@ -186,7 +243,7 @@ const Login = () => {
                 icon={
                   <Mail
                     size={18}
-                    className="text-muted-foreground dark:text-gray-400"
+                    className="text-gray-400 dark:text-gray-400"
                   />
                 }
                 type="email"
@@ -201,7 +258,7 @@ const Login = () => {
             {/* Password Field */}
             <div>
               <label
-                className="block text-sm font-medium mb-2 text-foreground dark:text-gray-100"
+                className="block text-sm font-medium mb-2 text-gray-800 dark:text-gray-100"
                 htmlFor="password"
               >
                 Password
@@ -210,7 +267,7 @@ const Login = () => {
                 icon={
                   <Lock
                     size={18}
-                    className="text-muted-foreground dark:text-gray-400"
+                    className="text-gray-400 dark:text-gray-400"
                   />
                 }
                 type={showPassword ? "text" : "password"}
@@ -257,7 +314,7 @@ const Login = () => {
               <div className="w-full border-t border-gray-300 dark:border-gray-700"></div>
             </div>
             <div className="relative flex justify-center text-sm">
-              <span className="bg-card dark:bg-gray-900 px-4 text-muted-foreground dark:text-gray-300">
+              <span className="bg-white dark:bg-gray-900 px-4 text-gray-600 dark:text-gray-300">
                 Or continue with
               </span>
             </div>
@@ -269,14 +326,13 @@ const Login = () => {
               icon={<FcGoogle size={20} />}
               label="Google"
               onClick={handleGoogleAuth}
-              isLoading={isLoading}
             />
           </div>
 
           {/* Signup Link */}
           <div className="mt-8 pt-6 border-t border-gray-200 dark:border-gray-700 text-center">
-            <p className="text-sm text-muted-foreground dark:text-gray-300">
-              Don’t have an account?{" "}
+            <p className="text-sm text-gray-600 dark:text-gray-300">
+              Don't have an account?{" "}
               <Link
                 to="/signup"
                 className="text-green-500 hover:text-green-600 font-medium transition-colors"
