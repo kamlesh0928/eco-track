@@ -1,71 +1,79 @@
-import React from "react";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
+import { useCustomTheme } from "../hooks/useTheme";
 
-// Animation variant for a smooth fade-in effect
 const fadeInUp = {
   initial: { opacity: 0, y: 20 },
   animate: { opacity: 1, y: 0 },
-  viewport: { once: false, amount: 0.2 }, // Ensures animation triggers when 20% of the section is visible
-  transition: { duration: 0.6, ease: "easeOut" }, // Smooth transition effect
+  viewport: { once: false, amount: 0.2 },
+  transition: { duration: 0.6, ease: "easeOut" },
 };
 
-const ContactSection = () => (
-  <section
-    id="contact"
-    className="py-24 px-6 text-center bg-green-50 dark:bg-card"
-  >
-    <div className="container mx-auto px-6 text-center">
-      {/* Heading Section with Animation */}
-      <motion.h2 {...fadeInUp} className="text-4xl md:text-5xl font-bold mb-6">
-        Get in Touch
-      </motion.h2>
+const ContactSection = () => {
+  const { currentTheme } = useCustomTheme();
 
-      {/* Subtext for context */}
-      <motion.p
-        {...fadeInUp}
-        className="text-lg text-muted-foreground mb-12 max-w-2xl mx-auto"
-      >
-        Have questions or want to collaborate? We’d love to hear from you!
-      </motion.p>
-
-      {/* Form Section with Smooth Animation */}
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5 }}
-        className="max-w-lg mx-auto"
-      >
-        <form className="space-y-6">
-          {/* Name Input Field */}
-          <input
-            type="text"
-            placeholder="Your Name"
-            className="w-full p-3 rounded-lg bg-muted dark:bg-gray-800 text-foreground dark:text-gray-100"
-          />
-
-          {/* Email Input Field */}
-          <input
-            type="email"
-            placeholder="Your Email"
-            className="w-full p-3 rounded-lg bg-muted dark:bg-gray-800 text-foreground dark:text-gray-100"
-          />
-
-          {/* Message Input Field */}
-          <textarea
-            placeholder="Your Message"
-            rows="5"
-            className="w-full p-3 rounded-lg bg-muted dark:bg-gray-800 text-foreground dark:text-gray-100"
-          />
-
-          {/* Submit Button */}
-          <Button className="w-full bg-green-500 hover:bg-green-600">
-            Send Message
-          </Button>
-        </form>
-      </motion.div>
-    </div>
-  </section>
-);
+  return (
+    <section
+      id="contact"
+      className={`py-24 px-6 text-center ${
+        currentTheme === "dark" ? "bg-black" : "bg-green-50"
+      }`}
+    >
+      <div className="container mx-auto px-6 text-center">
+        <motion.h2
+          {...fadeInUp}
+          className="text-4xl md:text-5xl font-bold mb-6 text-black dark:text-white"
+        >
+          Get in Touch
+        </motion.h2>
+        <motion.p
+          {...fadeInUp}
+          className="text-lg text-gray-600 dark:text-gray-100 mb-12 max-w-2xl mx-auto"
+        >
+          Have questions or want to collaborate? We’d love to hear from you!
+        </motion.p>
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
+          className="max-w-lg mx-auto"
+        >
+          <form className="space-y-6">
+            <input
+              type="text"
+              placeholder="Your Name"
+              className={`w-full p-3 rounded-lg ${
+                currentTheme === "dark"
+                  ? "bg-gray-800 text-gray-100"
+                  : "bg-gray-200 text-gray-800"
+              }`}
+            />
+            <input
+              type="email"
+              placeholder="Your Email"
+              className={`w-full p-3 rounded-lg ${
+                currentTheme === "dark"
+                  ? "bg-gray-800 text-gray-100"
+                  : "bg-gray-200 text-gray-800"
+              }`}
+            />
+            <textarea
+              placeholder="Your Message"
+              rows="5"
+              className={`w-full p-3 rounded-lg ${
+                currentTheme === "dark"
+                  ? "bg-gray-800 text-gray-100"
+                  : "bg-gray-200 text-gray-800"
+              }`}
+            />
+            <Button className="w-full text-md bg-green-600 hover:bg-green-700 font-semibold">
+              Send Message
+            </Button>
+          </form>
+        </motion.div>
+      </div>
+    </section>
+  );
+};
 
 export default ContactSection;
