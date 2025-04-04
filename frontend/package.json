@@ -44,6 +44,7 @@
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.0",
     "dotenv": "^16.4.7",
+    "emoji-mart": "^5.6.0",
     "firebase": "^11.4.0",
     "framer-motion": "^11.0.8",
     "lucide-react": "^0.479.0",
@@ -52,6 +53,7 @@
     "react": "^18.2.0",
     "react-circular-progressbar": "^2.2.0",
     "react-dom": "^18.2.0",
+    "react-globe.gl": "^2.33.2",
     "react-icons": "^5.5.0",
     "react-intersection-observer": "^9.8.1",
     "react-router-dom": "^7.3.0",
@@ -59,6 +61,7 @@
     "recharts": "^2.15.1",
     "tailwind-merge": "^2.2.1",
     "tailwindcss-animate": "^1.0.7",
+    "three": "^0.175.0",
     "validator": "^13.12.0"
   },
   "devDependencies": {
