@@ -15,7 +15,7 @@ import {
   Heart,
   Gift,
 } from "lucide-react";
-import { useTheme } from "next-themes";
+import { useCustomTheme } from "../hooks/useTheme";
 import FeaturesSection from "@/components/FeaturesSection";
 
 // Animation Variants
@@ -24,17 +24,10 @@ const fadeInUp = {
   animate: { opacity: 1, y: 0 },
   transition: { duration: 0.6, ease: "easeOut" },
 };
-
-const staggerChildren = {
-  animate: {
-    transition: {
-      staggerChildren: 0.1,
-    },
-  },
-};
+const staggerChildren = { animate: { transition: { staggerChildren: 0.1 } } };
 
 const Features = () => {
-  const { theme } = useTheme();
+  const { currentTheme } = useCustomTheme();
 
   const coreFeatures = [
     {
@@ -70,7 +63,7 @@ const Features = () => {
       title: "3D Earth View",
       desc: "Heatmap showcasing eco-friendly habits adopted across different regions.",
       color: "text-green-500",
-      path: "/earth-3d",
+      path: "/earth",
     },
     {
       icon: ShoppingBag,
@@ -107,8 +100,8 @@ const Features = () => {
   return (
     <div
       className={`min-h-screen pt-4 sm:pt-6 md:pt-8 lg:pt-12 mb-4 sm:mb-6 ${
-        theme === "dark" ? "dark" : ""
-      } bg-background text-foreground overflow-x-hidden`}
+        currentTheme === "dark" ? "bg-gray-950" : ""
+      } overflow-x-hidden`}
     >
       <div className="container mx-auto px-2 sm:px-4 md:px-6 lg:px-8">
         {/* Hero Section */}
@@ -116,7 +109,7 @@ const Features = () => {
           {...fadeInUp}
           className="mb-12 text-center relative overflow-hidden py-16"
         >
-          <div className="absolute inset-0 bg-gradient-to-br from-green-400/20 via-blue-500/20 to-purple-600/20 -z-10" />
+          <div className="absolute rounded-lg inset-0 bg-gradient-to-br from-green-400/20 via-blue-500/20 to-purple-600/20 -z-10" />
           {[...Array(25)].map((_, i) => (
             <motion.div
               key={i}
@@ -133,11 +126,10 @@ const Features = () => {
           <h1 className="text-5xl md:text-6xl font-extrabold mb-4 bg-gradient-to-r from-green-400 to-blue-500 bg-clip-text text-transparent">
             EcoTrack Features
           </h1>
-          <p className="text-xl text-muted-foreground dark:text-gray-300 max-w-3xl mx-auto">
+          <p className="text-xl text-gray-700 dark:text-gray-300 max-w-3xl mx-auto">
             Discover the powerful tools and unique features that make EcoTrack
             your ultimate companion for sustainable living.
           </p>
-          
         </motion.div>
 
         {/* Core Features */}
@@ -145,7 +137,11 @@ const Features = () => {
           variants={staggerChildren}
           initial="initial"
           animate="animate"
-          className="bg-card dark:bg-gray-900 p-6 rounded-xl shadow-md border border-gray-200 dark:border-gray-800 mb-6 sm:mb-8 md:mb-12"
+          className={`${
+            currentTheme === "dark"
+              ? "bg-gray-950 border-gray-800"
+              : "bg-green-50 border-gray-200"
+          } p-6 rounded-xl shadow-md border mb-6 sm:mb-8 md:mb-12`}
         >
           <motion.h2
             variants={fadeInUp}
@@ -155,7 +151,7 @@ const Features = () => {
           </motion.h2>
           <motion.p
             variants={fadeInUp}
-            className="text-base sm:text-lg text-muted-foreground dark:text-gray-300 mb-4 sm:mb-8 text-center"
+            className="text-base sm:text-lg text-gray-700 dark:text-gray-300 mb-4 sm:mb-8 text-center"
           >
             Everything you need to kickstart your eco-journey with EcoTrack.
           </motion.p>
@@ -166,13 +162,13 @@ const Features = () => {
                 variants={fadeInUp}
                 whileHover={{ scale: 1.02 }}
                 className={`p-6 rounded-lg ${
-                  theme === "dark" ? "bg-gray-800" : "bg-muted"
+                  currentTheme === "dark" ? "bg-gray-900" : "bg-gray-100"
                 } shadow-md flex flex-col items-center text-center`}
               >
                 <div
                   className={`relative w-12 h-12 sm:w-14 md:w-16 sm:h-14 md:h-16 rounded-full flex items-center justify-center mb-3 sm:mb-4 md:mb-6 ${
-                    theme === "dark"
-                      ? "bg-gradient-to-br from-emerald-700 to-cyan-700 border-cyan-600"
+                    currentTheme === "dark"
+                      ? "bg-gradient-to-br from-emerald-500 to-cyan-500 border-cyan-400"
                       : "bg-gradient-to-br from-emerald-200 to-cyan-200 border-emerald-300"
                   } ${window.innerWidth >= 640 ? "shadow-sm" : ""}`} // Shadow only on larger screens
                 >
@@ -186,12 +182,14 @@ const Features = () => {
                   />
                   <feature.icon
                     className={`relative w-6 h-6 sm:w-7 md:w-8 sm:h-7 md:h-8 ${
-                      theme === "dark" ? "text-white" : "text-gray-800"
+                      currentTheme === "dark" ? "text-white" : "text-gray-800"
                     } ${feature.color}`}
                   />
                 </div>
-                <h3 className="text-xl font-semibold mb-2">{feature.title}</h3>
-                <p className="text-sm text-muted-foreground dark:text-gray-300 mb-4">
+                <h3 className="text-xl text-black dark:text-gray-300 font-semibold mb-2">
+                  {feature.title}
+                </h3>
+                <p className="text-sm text-gray-600 dark:text-gray-200 mb-4">
                   {feature.desc}
                 </p>
                 <Link to={feature.path}>
@@ -214,7 +212,11 @@ const Features = () => {
         {/* Interactive Demo */}
         <motion.div
           variants={fadeInUp}
-          className="bg-card dark:bg-gray-900 p-4 sm:p-6 md:p-8 rounded-lg shadow-lg border border-border dark:border-border mb-6 sm:mb-8 md:mb-12"
+          className={`mt-12 ${
+            currentTheme === "dark"
+              ? "bg-gray-950 border-gray-800"
+              : "bg-green-50 border-gray-200"
+          } p-4 sm:p-6 md:p-8 rounded-lg shadow-lg border mb-6 sm:mb-8 md:mb-12`}
         >
           <motion.h2
             variants={fadeInUp}
@@ -224,7 +226,7 @@ const Features = () => {
           </motion.h2>
           <motion.p
             variants={fadeInUp}
-            className="text-base sm:text-lg text-muted-foreground dark:text-muted-foreground mb-4 sm:mb-8 text-center"
+            className="text-base sm:text-lg text-gray-700 dark:text-gray-300 mb-4 sm:mb-8 text-center"
           >
             Explore a mini-demo of EcoTrack’s key features right here!
           </motion.p>
@@ -232,42 +234,42 @@ const Features = () => {
             <motion.div
               whileHover={{ scale: 1.05 }}
               className={`p-4 sm:p-6 rounded-lg ${
-                theme === "dark" ? "bg-gray-800" : "bg-muted"
+                currentTheme === "dark" ? "bg-gray-900" : "bg-gray-100"
               } flex flex-col items-center text-center`}
             >
               <Sun className="w-8 h-8 sm:w-12 sm:h-12 text-yellow-500 mb-2 sm:mb-4 animate-pulse" />
-              <h3 className="text-base sm:text-lg font-semibold mb-1 sm:mb-2">
+              <h3 className="text-base sm:text-lg text-black dark:text-gray-300 font-semibold mb-1 sm:mb-2">
                 Weather Sync
               </h3>
-              <p className="text-sm text-muted-foreground dark:text-muted-foreground">
+              <p className="text-sm text-gray-600 dark:text-gray-300">
                 Real-time weather updates to guide your eco-choices.
               </p>
             </motion.div>
             <motion.div
               whileHover={{ scale: 1.05 }}
               className={`p-4 sm:p-6 rounded-lg ${
-                theme === "dark" ? "bg-gray-800" : "bg-muted"
+                currentTheme === "dark" ? "bg-gray-900" : "bg-gray-100"
               } flex flex-col items-center text-center`}
             >
               <BarChart className="w-8 h-8 sm:w-12 sm:h-12 text-blue-500 mb-2 sm:mb-4" />
-              <h3 className="text-base sm:text-lg font-semibold mb-1 sm:mb-2">
+              <h3 className="text-base sm:text-lg text-black dark:text-gray-300 font-semibold mb-1 sm:mb-2">
                 Impact Stats
               </h3>
-              <p className="text-sm text-muted-foreground dark:text-muted-foreground">
+              <p className="text-sm text-gray-600 dark:text-gray-300">
                 Visualize your CO₂ savings and resource conservation.
               </p>
             </motion.div>
             <motion.div
               whileHover={{ scale: 1.05 }}
               className={`p-4 sm:p-6 rounded-lg ${
-                theme === "dark" ? "bg-gray-800" : "bg-muted"
+                currentTheme === "dark" ? "bg-gray-900" : "bg-gray-100"
               } flex flex-col items-center text-center`}
             >
               <Trophy className="w-8 h-8 sm:w-12 sm:h-12 text-yellow-500 mb-2 sm:mb-4 animate-bounce" />
-              <h3 className="text-base sm:text-lg font-semibold mb-1 sm:mb-2">
+              <h3 className="text-base sm:text-lg text-black dark:text-gray-300 font-semibold mb-1 sm:mb-2">
                 Leaderboard Peek
               </h3>
-              <p className="text-sm text-muted-foreground dark:text-muted-foreground">
+              <p className="text-sm text-gray-600 dark:text-gray-300">
                 Check your rank and aim for the top spot!
               </p>
             </motion.div>
@@ -279,7 +281,11 @@ const Features = () => {
           variants={staggerChildren}
           initial="initial"
           animate="animate"
-          className="bg-green-50 dark:bg-gray-900 p-4 sm:p-6 md:p-8 rounded-lg shadow-lg border border-border dark:border-border mb-6 sm:mb-8 md:mb-12"
+          className={`p-4 sm:p-6 md:p-8 ${
+            currentTheme === "dark"
+              ? "bg-gray-950 border-gray-800"
+              : "bg-green-50 border-gray-200"
+          } rounded-lg shadow-lg border mb-6 sm:mb-8 md:mb-12`}
         >
           <motion.h2
             variants={fadeInUp}
@@ -289,7 +295,7 @@ const Features = () => {
           </motion.h2>
           <motion.p
             variants={fadeInUp}
-            className="text-base sm:text-lg text-muted-foreground dark:text-muted-foreground mb-4 sm:mb-8 text-center"
+            className="text-base sm:text-lg text-gray-700 dark:text-gray-300 mb-4 sm:mb-8 text-center"
           >
             Beyond features, here’s what you gain by joining the EcoTrack
             movement.
@@ -300,15 +306,15 @@ const Features = () => {
                 key={index}
                 variants={fadeInUp}
                 className={`p-4 sm:p-6 rounded-lg ${
-                  theme === "dark" ? "bg-gray-800" : "bg-muted"
+                  currentTheme === "dark" ? "bg-gray-900" : "bg-gray-100"
                 } flex items-start`}
               >
                 <benefit.icon className="w-6 h-6 sm:w-8 sm:h-8 text-green-500 mr-2 sm:mr-4 flex-shrink-0" />
                 <div>
-                  <h3 className="text-lg sm:text-xl font-semibold mb-1 sm:mb-2">
+                  <h3 className="text-lg sm:text-xl text-black dark:text-gray-300 font-semibold mb-1 sm:mb-2">
                     {benefit.title}
                   </h3>
-                  <p className="text-sm text-muted-foreground dark:text-muted-foreground">
+                  <p className="text-sm text-gray-600 dark:text-gray-300">
                     {benefit.desc}
                   </p>
                 </div>
