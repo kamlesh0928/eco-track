@@ -26,13 +26,14 @@ const handleGoogleAuth = async () => {
 
       window.location.href = "/location";
     } else {
-      
+      // Check if location data exists
       const userData = userDoc.data();
-
-      if (userData.location) {  // Check if location data exists
-        window.location.href = "/home";      // Location data exists, redirect to "/home"
+      if (userData.location) {
+        // Location data exists, redirect to /home
+        window.location.href = "/home";
       } else {
-        window.location.href = "/location";  // Location data doesn't exist, redirect to "/location"
+        // Location data doesn't exist, redirect to /location
+        window.location.href = "/location";
       }
     }
 
