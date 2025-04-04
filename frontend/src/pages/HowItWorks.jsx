@@ -2,33 +2,22 @@ import React from "react";
 import { motion } from "framer-motion";
 import {
   Leaf,
-  Zap,
   Globe,
   Trophy,
   Users,
-  Droplet,
-  Trash2,
   Award,
   Sprout,
-  CheckCircle,
-  Star,
-  MapPin,
   Activity,
   BarChart,
   Gift,
   Heart,
   TrendingUp,
-  Shield,
   Globe2,
   ArrowRight,
-  Calendar,
-  Sun,
-  Wind,
-  CloudRain,
   MessageSquare,
   Share2,
 } from "lucide-react";
-import { useTheme } from "next-themes";
+import { useCustomTheme } from "../hooks/useTheme";
 
 // Animation Variants
 const fadeInUp = {
@@ -36,17 +25,10 @@ const fadeInUp = {
   animate: { opacity: 1, y: 0 },
   transition: { duration: 0.6, ease: "easeOut" },
 };
-
-const staggerChildren = {
-  animate: {
-    transition: {
-      staggerChildren: 0.1,
-    },
-  },
-};
+const staggerChildren = { animate: { transition: { staggerChildren: 0.1 } } };
 
 const HowItWorks = () => {
-  const { theme } = useTheme();
+  const { currentTheme } = useCustomTheme();
 
   const steps = [
     {
@@ -131,7 +113,7 @@ const HowItWorks = () => {
   return (
     <div
       className={`min-h-screen pt-20 mb-8 ${
-        theme === "dark" ? "bg-gray-950 text-gray-100" : "bg-white text-black"
+        currentTheme === "dark" ? "bg-gray-950" : ""
       }`}
     >
       <div className="max-w-8xl container mx-auto px-6 sm:px-6 lg:px-8">
@@ -140,7 +122,7 @@ const HowItWorks = () => {
           {...fadeInUp}
           className="mb-12 text-center relative overflow-hidden py-16"
         >
-          <div className="absolute inset-0 bg-gradient-to-br from-green-400/20 via-blue-500/20 to-purple-600/20 -z-10" />
+          <div className="absolute rounded-lg inset-0 bg-gradient-to-br from-green-400/20 via-blue-500/20 to-purple-600/20 -z-10" />
           {[...Array(20)].map((_, i) => (
             <motion.div
               key={i}
@@ -157,7 +139,7 @@ const HowItWorks = () => {
           <h1 className="text-5xl md:text-6xl font-extrabold mb-4 bg-gradient-to-r from-green-400 to-blue-500 bg-clip-text text-transparent">
             How EcoTrack Works
           </h1>
-          <p className="text-xl text-muted-foreground dark:text-gray-300 max-w-3xl mx-auto">
+          <p className="text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto">
             A simple, rewarding journey to sustainability—track your impact,
             take action, and make a difference for the planet.
           </p>
@@ -168,7 +150,11 @@ const HowItWorks = () => {
           variants={staggerChildren}
           initial="initial"
           animate="animate"
-          className="bg-card dark:bg-gray-900 p-8 rounded-xl shadow-lg border border-gray-200 dark:border-gray-800 backdrop-blur-lg mb-12"
+          className={`p-8 rounded-xl shadow-lg border backdrop-blur-lg ${
+            currentTheme === "dark"
+              ? "bg-gray-900 border-gray-800"
+              : "bg-green-50 border-gray-200"
+          } mb-12`}
         >
           <motion.h2
             variants={fadeInUp}
@@ -178,7 +164,7 @@ const HowItWorks = () => {
           </motion.h2>
           <motion.p
             variants={fadeInUp}
-            className="text-lg text-muted-foreground dark:text-gray-300 mb-8 text-center"
+            className="text-lg text-gray-600 dark:text-gray-300 mb-8 text-center"
           >
             Follow these steps to reduce your environmental footprint and
             contribute to a greener future.
@@ -189,18 +175,18 @@ const HowItWorks = () => {
                 key={index}
                 variants={fadeInUp}
                 className={`p-6 rounded-lg ${
-                  theme === "dark" ? "bg-gray-800" : "bg-muted"
+                  currentTheme === "dark" ? "bg-gray-800" : "bg-gray-100"
                 } flex items-center justify-between`}
               >
                 <div className="flex items-center">
-                  <div className="w-16 h-16 rounded-full bg-gradient-to-r from-green-500 to-blue-500 flex items-center justify-center mr-4">
+                  <div className="w-16 h-16 rounded-full bg-gradient-to-r from-green-200 to-blue-200 flex items-center justify-center mr-4">
                     <step.icon className={`w-8 h-8 ${step.color}`} />
                   </div>
                   <div>
-                    <h3 className="text-xl font-semibold mb-2">{`${
+                    <h3 className="text-xl font-semibold mb-2 text-gray-800 dark:text-gray-200">{`${
                       index + 1
                     }. ${step.title}`}</h3>
-                    <p className="text-sm text-muted-foreground dark:text-gray-300">
+                    <p className="text-sm text-gray-600 dark:text-gray-300">
                       {step.desc}
                     </p>
                   </div>
@@ -218,7 +204,11 @@ const HowItWorks = () => {
           variants={staggerChildren}
           initial="initial"
           animate="animate"
-          className="bg-green-50 dark:bg-gray-900 p-8 rounded-xl shadow-lg border border-gray-200 dark:border-gray-800 mb-12"
+          className={`p-8 rounded-xl ${
+            currentTheme === "dark"
+              ? "bg-gray-900 border-gray-800"
+              : "bg-green-50 border-gray-200"
+          } shadow-lg border mb-12`}
         >
           <motion.h2
             variants={fadeInUp}
@@ -228,7 +218,7 @@ const HowItWorks = () => {
           </motion.h2>
           <motion.p
             variants={fadeInUp}
-            className="text-lg text-muted-foreground dark:text-gray-300 mb-8 text-center"
+            className="text-lg text-gray-600 dark:text-gray-300 mb-8 text-center"
           >
             Here’s why EcoTrack is the perfect companion for your sustainability
             journey.
@@ -239,15 +229,15 @@ const HowItWorks = () => {
                 key={index}
                 variants={fadeInUp}
                 className={`p-6 rounded-lg ${
-                  theme === "dark" ? "bg-gray-800" : "bg-muted"
+                  currentTheme === "dark" ? "bg-gray-800" : "bg-gray-100"
                 } flex items-start`}
               >
                 <benefit.icon className="w-8 h-8 text-green-500 mr-4 flex-shrink-0" />
                 <div>
-                  <h3 className="text-lg font-semibold mb-2">
+                  <h3 className="text-lg font-semibold mb-2 text-black dark:text-gray-100">
                     {benefit.title}
                   </h3>
-                  <p className="text-sm text-muted-foreground dark:text-gray-300">
+                  <p className="text-sm text-gray-600 dark:text-gray-300">
                     {benefit.desc}
                   </p>
                 </div>
@@ -261,7 +251,11 @@ const HowItWorks = () => {
           variants={staggerChildren}
           initial="initial"
           animate="animate"
-          className="bg-card dark:bg-gray-900 p-8 rounded-xl shadow-lg border border-gray-200 dark:border-gray-800 backdrop-blur-lg mb-12"
+          className={`p-8 mt-10 rounded-xl ${
+            currentTheme === "dark"
+              ? "bg-gray-900 border-gray-800"
+              : "bg-green-50 border-gray-200"
+          } shadow-lg border backdrop-blur-lg mb-12`}
         >
           <motion.h2
             variants={fadeInUp}
@@ -271,7 +265,7 @@ const HowItWorks = () => {
           </motion.h2>
           <motion.p
             variants={fadeInUp}
-            className="text-lg text-muted-foreground dark:text-gray-300 mb-8 text-center"
+            className="text-lg text-gray-600 dark:text-gray-300 mb-8 text-center"
           >
             We’re just getting started! Here’s a glimpse of what’s coming to
             make your sustainability journey even more impactful.
@@ -282,14 +276,14 @@ const HowItWorks = () => {
               variants={fadeInUp}
               whileHover={{ scale: 1.05 }}
               className={`p-6 rounded-lg ${
-                theme === "dark" ? "bg-gray-800" : "bg-muted"
+                currentTheme === "dark" ? "bg-gray-800" : "bg-gray-100"
               } flex flex-col items-center text-center`}
             >
-              <Globe className="w-12 h-12 text-green-500 mb-4 animate-spin" />
-              <h3 className="text-lg font-semibold mb-2">
+              <Globe className="w-12 h-12 text-green-500 mb-4 animate-pulse" />
+              <h3 className="text-lg font-semibold mb-2 text-black dark:text-gray-200">
                 AR Impact Visualization
               </h3>
-              <p className="text-sm text-muted-foreground dark:text-gray-300">
+              <p className="text-sm text-gray-600 dark:text-gray-300">
                 See your eco-impact in augmented reality—watch virtual trees
                 grow and carbon emissions shrink right in your surroundings.
               </p>
@@ -300,12 +294,14 @@ const HowItWorks = () => {
               variants={fadeInUp}
               whileHover={{ scale: 1.05 }}
               className={`p-6 rounded-lg ${
-                theme === "dark" ? "bg-gray-800" : "bg-muted"
+                currentTheme === "dark" ? "bg-gray-800" : "bg-gray-100"
               } flex flex-col items-center text-center`}
             >
               <Users className="w-12 h-12 text-green-500 mb-4" />
-              <h3 className="text-lg font-semibold mb-2">Social Challenges</h3>
-              <p className="text-sm text-muted-foreground dark:text-gray-300">
+              <h3 className="text-lg font-semibold mb-2 text-black dark:text-gray-200">
+                Social Challenges
+              </h3>
+              <p className="text-sm text-gray-600 dark:text-gray-300">
                 Team up with friends for group challenges—compete, collaborate,
                 and amplify your collective impact.
               </p>
@@ -316,14 +312,14 @@ const HowItWorks = () => {
               variants={fadeInUp}
               whileHover={{ scale: 1.05 }}
               className={`p-6 rounded-lg ${
-                theme === "dark" ? "bg-gray-800" : "bg-muted"
+                currentTheme === "dark" ? "bg-gray-800" : "bg-gray-100"
               } flex flex-col items-center text-center`}
             >
               <Gift className="w-12 h-12 text-green-500 mb-4 animate-bounce" />
-              <h3 className="text-lg font-semibold mb-2">
+              <h3 className="text-lg font-semibold mb-2 text-black dark:text-gray-200">
                 Eco-Lifestyle Marketplace
               </h3>
-              <p className="text-sm text-muted-foreground dark:text-gray-300">
+              <p className="text-sm text-gray-600 dark:text-gray-300">
                 Redeem points for sustainable products—from reusable bottles to
                 eco-friendly gadgets.
               </p>
@@ -334,20 +330,18 @@ const HowItWorks = () => {
               variants={fadeInUp}
               whileHover={{ scale: 1.05 }}
               className={`p-6 rounded-lg ${
-                theme === "dark" ? "bg-gray-800" : "bg-muted"
+                currentTheme === "dark" ? "bg-gray-800" : "bg-gray-100"
               } flex flex-col items-center text-center`}
             >
               <MessageSquare className="w-12 h-12 text-green-500 mb-4" />
-              <h3 className="text-lg font-semibold mb-2">
+              <h3 className="text-lg font-semibold mb-2 text-black dark:text-gray-200">
                 Join Our Beta Program
               </h3>
-              <p className="text-sm text-muted-foreground dark:text-gray-300">
+              <p className="text-sm text-gray-600 dark:text-gray-300">
                 Be among the first to test EcoTrack, provide feedback, and shape
                 its future.
               </p>
               <motion.button
-                type="button"
-                aria-label="Sign Up for Beta Testing"
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
                 className="mt-4 py-2 px-4 bg-green-500 text-white rounded-lg shadow-md hover:bg-green-600"
@@ -361,18 +355,18 @@ const HowItWorks = () => {
               variants={fadeInUp}
               whileHover={{ scale: 1.05 }}
               className={`p-6 rounded-lg ${
-                theme === "dark" ? "bg-gray-800" : "bg-muted"
+                currentTheme === "dark" ? "bg-gray-800" : "bg-gray-100"
               } flex flex-col items-center text-center`}
             >
               <Heart className="w-12 h-12 text-green-500 mb-4 animate-pulse" />
-              <h3 className="text-lg font-semibold mb-2">Share Your Ideas</h3>
-              <p className="text-sm text-muted-foreground dark:text-gray-300">
+              <h3 className="text-lg font-semibold mb-2 text-black dark:text-gray-200">
+                Share Your Ideas
+              </h3>
+              <p className="text-sm text-gray-600 dark:text-gray-300">
                 Have a feature in mind? Let us know how we can make EcoTrack
                 even better for you.
               </p>
               <motion.button
-                type="button"
-                aria-label="Submit Feedback for EcoTrack"
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
                 className="mt-4 py-2 px-4 bg-green-500 text-white rounded-lg shadow-md hover:bg-green-600"
@@ -386,18 +380,18 @@ const HowItWorks = () => {
               variants={fadeInUp}
               whileHover={{ scale: 1.05 }}
               className={`p-6 rounded-lg ${
-                theme === "dark" ? "bg-gray-800" : "bg-muted"
+                currentTheme === "dark" ? "bg-gray-800" : "bg-gray-100"
               } flex flex-col items-center text-center`}
             >
               <Share2 className="w-12 h-12 text-green-500 mb-4" />
-              <h3 className="text-lg font-semibold mb-2">Spread the Word</h3>
-              <p className="text-sm text-muted-foreground dark:text-gray-300">
+              <h3 className="text-lg font-semibold mb-2 text-black dark:text-gray-200">
+                Spread the Word
+              </h3>
+              <p className="text-sm text-gray-600 dark:text-gray-300">
                 Invite friends to join the eco-movement and grow our community
                 of change-makers.
               </p>
               <motion.button
-                type="button"
-                aria-label="Invite Friends to EcoTrack"
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
                 className="mt-4 py-2 px-4 bg-green-500 text-white rounded-lg shadow-md hover:bg-green-600"
@@ -421,8 +415,6 @@ const HowItWorks = () => {
             impact the planet—one step at a time.
           </p>
           <motion.button
-            type="button"
-            aria-label="Get Started with EcoTrack"
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
             className="py-3 px-10 bg-white text-green-600 font-semibold rounded-lg shadow-lg hover:bg-gray-100"
