@@ -12,11 +12,10 @@ import {
   ChevronUp,
   ChevronDown,
   Globe,
-  Calendar,
   Trash2,
   Droplet,
 } from "lucide-react";
-import { useTheme } from "next-themes";
+import { useCustomTheme } from "../hooks/useTheme";
 
 // Animation Variants
 const fadeInUp = {
@@ -24,17 +23,10 @@ const fadeInUp = {
   animate: { opacity: 1, y: 0 },
   transition: { duration: 0.6, ease: "easeOut" },
 };
-
-const staggerChildren = {
-  animate: {
-    transition: {
-      staggerChildren: 0.1,
-    },
-  },
-};
+const staggerChildren = { animate: { transition: { staggerChildren: 0.1 } } };
 
 const Leaderboard = () => {
-  const { theme } = useTheme();
+  const { currentTheme } = useCustomTheme();
   const [leaderboardData, setLeaderboardData] = useState([]);
   const [weeklyTasks, setWeeklyTasks] = useState([]);
   const [expandedUser, setExpandedUser] = useState(null);
@@ -161,16 +153,13 @@ const Leaderboard = () => {
     setWeeklyTasks(mockTasks);
   }, []);
 
-  const toggleExpand = (rank) => {
+  const toggleExpand = (rank) =>
     setExpandedUser(expandedUser === rank ? null : rank);
-  };
 
   return (
     <div
       className={`min-h-screen pt-20 mb-8 ${
-        theme === "dark"
-          ? "bg-gray-950 text-gray-100"
-          : "bg-background text-foreground"
+        currentTheme === "dark" ? "bg-gray-950" : ""
       }`}
     >
       <div className="max-w-8xl container mx-auto px-6 sm:px-6 lg:px-8">
@@ -179,13 +168,13 @@ const Leaderboard = () => {
           {...fadeInUp}
           className="mb-12 text-center relative overflow-hidden py-12"
         >
-          <div className="absolute inset-0 bg-gradient-to-br from-green-400/20 via-blue-500/20 to-purple-600/20 -z-10" />
-          {[...Array(20)].map((_, i) => (
+          <div className="absolute rounded-lg inset-0 bg-gradient-to-br from-green-400/20 via-blue-500/20 to-purple-600/20 -z-10" />
+          {[...Array(15)].map((_, i) => (
             <motion.div
               key={i}
               initial={{ opacity: 0, y: -50 }}
               animate={{ opacity: [0, 1, 0], y: [0, 100, 0] }}
-              transition={{ duration: 5, repeat: Infinity, delay: i * 0.2 }}
+              transition={{ duration: 5, repeat: Infinity, delay: i * 0.3 }}
               className="absolute w-2 h-2 bg-green-500 rounded-full"
               style={{
                 top: `${Math.random() * 100}%`,
@@ -196,7 +185,7 @@ const Leaderboard = () => {
           <h1 className="text-5xl md:text-6xl font-extrabold mb-4 bg-gradient-to-r from-green-400 to-blue-500 bg-clip-text text-transparent">
             EcoTrack Leaderboard
           </h1>
-          <p className="text-xl text-muted-foreground dark:text-gray-300 max-w-3xl mx-auto">
+          <p className="text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto">
             Climb the ranks by completing eco-challenges! Weekly winners are
             celebrated here—make a difference and shine!
           </p>
@@ -207,7 +196,11 @@ const Leaderboard = () => {
           variants={staggerChildren}
           initial="initial"
           animate="animate"
-          className="bg-card dark:bg-gray-900 p-8 rounded-xl shadow-lg border border-gray-200 dark:border-gray-800 backdrop-blur-lg mb-12"
+          className={`${
+            currentTheme === "dark"
+              ? "bg-gray-900 border-gray-800"
+              : "bg-green-50 border-gray-200"
+          } p-8 rounded-xl shadow-lg border backdrop-blur-lg mb-12`}
         >
           <motion.h2
             variants={fadeInUp}
@@ -221,7 +214,7 @@ const Leaderboard = () => {
                 key={user.rank}
                 variants={fadeInUp}
                 className={`p-4 rounded-lg ${
-                  theme === "dark" ? "bg-gray-800" : "bg-muted"
+                  currentTheme === "dark" ? "bg-gray-800" : "bg-gray-100"
                 } shadow-md`}
               >
                 <div
@@ -246,10 +239,10 @@ const Leaderboard = () => {
                       )}
                     </div>
                     <div>
-                      <p className="text-lg font-semibold">
+                      <p className="text-lg font-semibold text-black dark:text-gray-100">
                         {user.rank}. {user.name}
                       </p>
-                      <p className="text-sm text-muted-foreground dark:text-gray-300">
+                      <p className="text-sm text-gray-600 dark:text-gray-300">
                         {user.points} Points | {user.tasksCompleted} Tasks
                       </p>
                     </div>
@@ -270,9 +263,9 @@ const Leaderboard = () => {
                     initial={{ height: 0, opacity: 0 }}
                     animate={{ height: "auto", opacity: 1 }}
                     exit={{ height: 0, opacity: 0 }}
-                    className="mt-4 p-4 bg-green-50 dark:bg-gray-700 rounded-lg"
+                    className="mt-4 p-4 bg-green-100 dark:bg-gray-700 rounded-lg"
                   >
-                    <p className="text-sm text-muted-foreground dark:text-gray-300">
+                    <p className="text-sm text-gray-600 dark:text-gray-300">
                       {user.name} has been crushing it this week! Here’s a peek
                       at their top contributions:
                     </p>
@@ -296,13 +289,13 @@ const Leaderboard = () => {
             ))}
           </div>
           <div className="text-center">
-          <motion.button
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-            className="mt-6 lg:w-1/2 mx-auto py-3 px-4 rounded-lg bg-gradient-to-r from-yellow-500 to-orange-500 text-white font-semibold shadow-lg hover:from-yellow-600 hover:to-orange-600"
-          >
-            See Full Leaderboard
-          </motion.button>
+            <motion.button
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              className="mt-6 lg:w-1/2 mx-auto py-3 px-4 rounded-lg bg-gradient-to-r from-yellow-500 to-orange-500 text-white font-semibold shadow-lg hover:from-yellow-600 hover:to-orange-600"
+            >
+              See Full Leaderboard
+            </motion.button>
           </div>
         </motion.div>
 
@@ -311,7 +304,11 @@ const Leaderboard = () => {
           variants={staggerChildren}
           initial="initial"
           animate="animate"
-          className="bg-green-50 dark:bg-gray-900 p-8 rounded-xl shadow-lg border border-gray-200 dark:border-gray-800 mb-12"
+          className={`${
+            currentTheme === "dark"
+              ? "bg-gray-900 border-gray-800"
+              : "bg-green-50 border-gray-200"
+          } p-8 rounded-xl shadow-lg border mb-12`}
         >
           <motion.h2
             variants={fadeInUp}
@@ -321,7 +318,7 @@ const Leaderboard = () => {
           </motion.h2>
           <motion.p
             variants={fadeInUp}
-            className="text-lg text-muted-foreground dark:text-gray-300 mb-6 text-center"
+            className="text-lg text-gray-600 dark:text-gray-300 mb-6 text-center"
           >
             Complete these tasks to earn points and climb the leaderboard!
           </motion.p>
@@ -331,14 +328,16 @@ const Leaderboard = () => {
                 key={task.id}
                 variants={fadeInUp}
                 className={`p-6 rounded-lg ${
-                  theme === "dark" ? "bg-gray-800" : "bg-muted"
+                  currentTheme === "dark" ? "bg-gray-800" : "bg-gray-100"
                 } shadow-lg flex flex-col items-start`}
               >
                 <div className="flex items-center mb-3">
                   <task.icon className="w-6 h-6 text-green-500 mr-2" />
-                  <h3 className="text-lg font-semibold">{task.title}</h3>
+                  <h3 className="text-lg font-semibold text-black dark:text-gray-100">
+                    {task.title}
+                  </h3>
                 </div>
-                <p className="text-sm text-muted-foreground dark:text-gray-300 mb-4">
+                <p className="text-sm text-gray-600 dark:text-gray-300 mb-4">
                   {task.desc}
                 </p>
                 <div className="flex items-center justify-between w-full">
