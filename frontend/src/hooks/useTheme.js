@@ -1,28 +1,21 @@
-import { useEffect, useState } from 'react';
+// hooks/useTheme.js
+import { useTheme } from 'next-themes';
+import { useState, useEffect } from 'react';
 
-export function useTheme() {
-  const [theme, setTheme] = useState('system');
+export function useCustomTheme() {
+  const { theme, setTheme, systemTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
     setMounted(true);
-    const savedTheme = localStorage.getItem('theme') || 'system';
-    setTheme(savedTheme);
   }, []);
 
-  const updateTheme = (newTheme) => {
-    setTheme(newTheme);
-    localStorage.setItem('theme', newTheme);
-    if (newTheme === 'dark') {
-      document.documentElement.classList.add('dark');
-    } else {
-      document.documentElement.classList.remove('dark');
-    }
+  // Default theme ko "light" ya "dark" set karo jab tak mount na ho
+  const currentTheme = mounted ? (theme === 'system' ? systemTheme : theme) : 'light';
+
+  const toggleTheme = () => {
+    setTheme(currentTheme === 'dark' ? 'light' : 'dark');
   };
 
-  return {
-    theme,
-    setTheme: updateTheme,
-    mounted,
-  };
+  return { currentTheme, toggleTheme };
 }
