@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { motion } from "framer-motion";
 import { Mail, Phone, MapPin, Send, Leaf } from "lucide-react";
-import { useTheme } from "next-themes";
+import { useCustomTheme } from "../hooks/useTheme";
 
 // Animation Variants
 const fadeInUp = {
@@ -11,15 +11,11 @@ const fadeInUp = {
 };
 
 const staggerChildren = {
-  animate: {
-    transition: {
-      staggerChildren: 0.1,
-    },
-  },
+  animate: { transition: { staggerChildren: 0.1 } },
 };
 
 const Contact = () => {
-  const { theme } = useTheme();
+  const { currentTheme } = useCustomTheme();
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -46,9 +42,7 @@ const Contact = () => {
   return (
     <div
       className={`min-h-screen pt-20 mb-8 ${
-        theme === "dark"
-          ? "bg-gray-950 text-gray-100"
-          : "bg-background text-foreground"
+        currentTheme === "dark" ? "bg-gray-950" : ""
       }`}
     >
       <div className="max-w-8xl container mx-auto px-6 sm:px-6 lg:px-8">
@@ -57,7 +51,7 @@ const Contact = () => {
           {...fadeInUp}
           className="mb-12 text-center relative overflow-hidden py-12"
         >
-          <div className="absolute inset-0 bg-gradient-to-br from-green-400/20 via-blue-500/20 to-purple-600/20 -z-10" />
+          <div className="absolute rounded-lg inset-0 bg-gradient-to-br from-green-400/20 via-blue-500/20 to-purple-600/20 -z-10" />
           {[...Array(15)].map((_, i) => (
             <motion.div
               key={i}
@@ -74,7 +68,7 @@ const Contact = () => {
           <h1 className="text-5xl md:text-6xl font-extrabold mb-4 bg-gradient-to-r from-green-400 to-blue-500 bg-clip-text text-transparent">
             Contact EcoTrack
           </h1>
-          <p className="text-xl text-muted-foreground dark:text-gray-300 max-w-3xl mx-auto">
+          <p className="text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto">
             Have questions or feedback? We’d love to hear from you! Reach out
             and let’s make the planet greener together.
           </p>
@@ -90,7 +84,11 @@ const Contact = () => {
           {/* Contact Form */}
           <motion.div
             variants={fadeInUp}
-            className="bg-card dark:bg-gray-900 p-8 rounded-xl shadow-lg border border-gray-200 dark:border-gray-800 backdrop-blur-lg"
+            className={`${
+              currentTheme === "dark"
+                ? "bg-gray-900 border-gray-800"
+                : "bg-gray-100 border-gray-200"
+            } p-8 rounded-xl shadow-lg border backdrop-blur-lg`}
           >
             <h2 className="text-3xl font-semibold mb-6 text-green-600 dark:text-green-400">
               Send Us a Message
@@ -98,7 +96,7 @@ const Contact = () => {
             <form onSubmit={handleSubmit} className="space-y-6">
               <div>
                 <label
-                  className="block text-sm font-medium mb-2"
+                  className="block text-sm font-medium mb-2 text-black dark:text-gray-100"
                   htmlFor="name"
                 >
                   Name
@@ -112,15 +110,15 @@ const Contact = () => {
                   placeholder="Your Name"
                   required
                   className={`w-full p-3 rounded-lg border ${
-                    theme === "dark"
-                      ? "bg-gray-800 border-gray-700"
-                      : "bg-muted border-gray-300"
-                  } focus:ring-2 focus:ring-green-500 focus:border-green-500 text-foreground dark:text-gray-100`}
+                    currentTheme === "dark"
+                      ? "bg-gray-800 border-gray-700 text-gray-100"
+                      : "bg-gray-200 border-gray-300 text-gray-800"
+                  } focus:ring-2 focus:ring-green-500 focus:border-green-500`}
                 />
               </div>
               <div>
                 <label
-                  className="block text-sm font-medium mb-2"
+                  className="block text-sm font-medium mb-2 text-black dark:text-gray-100"
                   htmlFor="email"
                 >
                   Email
@@ -134,15 +132,15 @@ const Contact = () => {
                   placeholder="you@example.com"
                   required
                   className={`w-full p-3 rounded-lg border ${
-                    theme === "dark"
-                      ? "bg-gray-800 border-gray-700"
-                      : "bg-muted border-gray-300"
-                  } focus:ring-2 focus:ring-green-500 focus:border-green-500 text-foreground dark:text-gray-100`}
+                    currentTheme === "dark"
+                      ? "bg-gray-800 border-gray-700 text-gray-100"
+                      : "bg-gray-200 border-gray-300 text-gray-800"
+                  } focus:ring-2 focus:ring-green-500 focus:border-green-500`}
                 />
               </div>
               <div>
                 <label
-                  className="block text-sm font-medium mb-2"
+                  className="block text-sm font-medium mb-2 text-black dark:text-gray-100"
                   htmlFor="message"
                 >
                   Message
@@ -156,10 +154,10 @@ const Contact = () => {
                   required
                   rows="4"
                   className={`w-full p-3 rounded-lg border ${
-                    theme === "dark"
-                      ? "bg-gray-800 border-gray-700"
-                      : "bg-muted border-gray-300"
-                  } focus:ring-2 focus:ring-green-500 focus:border-green-500 text-foreground dark:text-gray-100`}
+                    currentTheme === "dark"
+                      ? "bg-gray-800 border-gray-700 text-gray-100"
+                      : "bg-gray-200 border-gray-300 text-gray-800"
+                  } focus:ring-2 focus:ring-green-500 focus:border-green-500`}
                 />
               </div>
               <motion.button
@@ -187,7 +185,11 @@ const Contact = () => {
           {/* Contact Details */}
           <motion.div
             variants={fadeInUp}
-            className="bg-green-50 dark:bg-gray-900 p-8 rounded-xl shadow-lg border border-gray-200 dark:border-gray-800"
+            className={`${
+              currentTheme === "dark"
+                ? "bg-gray-900 border-gray-800"
+                : "bg-green-50 border-gray-200"
+            } p-8 rounded-xl shadow-lg border`}
           >
             <h2 className="text-3xl font-semibold mb-6 text-green-600 dark:text-green-400">
               Get in Touch
@@ -196,11 +198,13 @@ const Contact = () => {
               <div className="flex items-start">
                 <Mail className="w-6 h-6 text-green-500 mr-4 flex-shrink-0" />
                 <div>
-                  <h3 className="text-lg font-semibold">Email Us</h3>
-                  <p className="text-sm text-muted-foreground dark:text-gray-300">
-                    support@ecotrack.com
+                  <h3 className="text-xl font-semibold text-black dark:text-gray-300">
+                    Email Us
+                  </h3>
+                  <p className="text-sm text-gray-600 dark:text-gray-200 mb-1">
+                    ecotrack.service@gmail.com
                   </p>
-                  <p className="text-sm text-muted-foreground dark:text-gray-300">
+                  <p className="text-sm text-gray-600 dark:text-gray-200">
                     We respond within 24 hours!
                   </p>
                 </div>
@@ -208,11 +212,13 @@ const Contact = () => {
               <div className="flex items-start">
                 <Phone className="w-6 h-6 text-green-500 mr-4 flex-shrink-0" />
                 <div>
-                  <h3 className="text-lg font-semibold">Call Us</h3>
-                  <p className="text-sm text-muted-foreground dark:text-gray-300">
-                    +91 9460143008
+                  <h3 className="text-xl font-semibold text-black dark:text-gray-300">
+                    Call Us
+                  </h3>
+                  <p className="text-sm text-gray-600 dark:text-gray-200 mb-1">
+                    +91 7976712864
                   </p>
-                  <p className="text-sm text-muted-foreground dark:text-gray-300">
+                  <p className="text-sm text-gray-600 dark:text-gray-200">
                     Mon-Fri, 9 AM - 5 PM IST
                   </p>
                 </div>
@@ -220,13 +226,17 @@ const Contact = () => {
               <div className="flex items-start">
                 <MapPin className="w-6 h-6 text-green-500 mr-4 flex-shrink-0" />
                 <div>
-                  <h3 className="text-lg font-semibold">Visit Us</h3>
-                  <p className="text-sm text-muted-foreground dark:text-gray-300">
-                    Indian Institute of Technology Patna, Bihta, Patna, Bihar
-                    801106, India
+                  <h3 className="text-xl font-semibold text-black dark:text-gray-300">
+                    Visit Us
+                  </h3>
+                  <p className="text-sm text-gray-600 dark:text-gray-200 mb-1">
+                    Indian Institute of Technology Patna,
                   </p>
-                  <p className="text-sm text-muted-foreground dark:text-gray-300">
-                    By appointment only
+                  <p className="text-sm text-gray-600 dark:text-gray-200">
+                    Bihta, Patna, Bihar
+                  </p>
+                  <p className="text-sm text-gray-600 dark:text-gray-200">
+                    801106, India
                   </p>
                 </div>
               </div>
