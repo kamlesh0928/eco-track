@@ -1,7 +1,6 @@
-// src/pages/CommunityHub.jsx
 import React, { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { useTheme } from "next-themes";
+import { useCustomTheme } from "../hooks/useTheme";
 import {
   Users,
   MessageSquare,
@@ -100,7 +99,7 @@ const initialEcoTips = [
 
 // Community Hub Component
 const CommunityHub = () => {
-  const { theme } = useTheme();
+  const { currentTheme } = useCustomTheme();
   const [mounted, setMounted] = useState(false);
   const [activeSection, setActiveSection] = useState("Discussions");
   const [discussions, setDiscussions] = useState(initialDiscussions);
@@ -111,7 +110,7 @@ const CommunityHub = () => {
   const [userStats, setUserStats] = useState({ posts: 0, eventsJoined: 0 });
   const [mediaFile, setMediaFile] = useState(null);
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
-  const [isSidebarExpanded, setIsSidebarExpanded] = useState(true); // For small screens
+  const [isSidebarExpanded, setIsSidebarExpanded] = useState(true);
   const fileInputRef = useRef(null);
 
   useEffect(() => {
@@ -137,7 +136,7 @@ const CommunityHub = () => {
 
   if (!mounted) return null;
 
-  const isDarkMode = theme === "dark";
+  const isDarkMode = currentTheme === "dark";
 
   // Handle media upload
   const handleMediaUpload = (e) => {
@@ -276,17 +275,15 @@ const CommunityHub = () => {
   return (
     <div
       className={`min-h-screen mt-16 ${
-        isDarkMode
-          ? "bg-gray-900 text-white"
-          : "bg-gradient-to-br from-emerald-50 via-emerald-100 to-cyan-100 text-gray-900"
+        isDarkMode ? "bg-gray-950 text-gray-200" : "bg-white text-gray-900"
       } flex flex-col md:flex-row overflow-x-hidden`}
     >
       {/* Sidebar */}
       <motion.div
         className={`w-full md:w-64 lg:w-72 ${
           isDarkMode
-            ? "bg-gray-800 border-gray-700"
-            : "bg-white border-gray-200"
+            ? "bg-gray-900 border-gray-800"
+            : "bg-gradient-to-b from-green-700 to-emerald-500 border-gray-200"
         } border-b md:border-r p-3 sm:p-4 md:p-6 flex flex-col gap-3 sm:gap-4 md:gap-6 md:h-screen md:sticky md:top-0 transition-all duration-300`}
         initial={{ height: "auto" }}
         animate={{ height: isSidebarExpanded ? "auto" : "60px" }}
@@ -296,17 +293,13 @@ const CommunityHub = () => {
           <div className="text-center flex-1">
             <Users
               className={`w-8 h-8 sm:w-10 sm:h-10 md:w-12 md:h-12 mx-auto mb-2 ${
-                isDarkMode ? "text-green-400" : "text-green-600"
+                isDarkMode ? "text-green-400" : "text-white"
               } animate-pulse`}
             />
             <h2
-              className={`text-lg sm:text-xl md:text-2xl font-bold bg-gradient-to-r ${
-                isDarkMode
-                  ? "from-green-400 to-emerald-400"
-                  : "from-green-500 to-emerald-500"
-              } bg-clip-text text-transparent ${
-                isSidebarExpanded ? "block" : "hidden md:block"
-              }`}
+              className={`text-lg sm:text-xl md:text-2xl font-bold ${
+                isDarkMode ? "text-green-400" : "text-white"
+              } ${isSidebarExpanded ? "block" : "hidden md:block"}`}
             >
               Community Hub
             </h2>
@@ -339,10 +332,10 @@ const CommunityHub = () => {
                 activeSection === section
                   ? isDarkMode
                     ? "bg-green-600 text-white"
-                    : "bg-green-100 text-green-800"
+                    : "bg-white text-green-800"
                   : isDarkMode
                   ? "text-gray-300 hover:bg-gray-700"
-                  : "text-gray-600 hover:bg-gray-100"
+                  : "text-white hover:bg-green-400"
               } transition-all duration-300`}
             >
               {section === "Discussions" && (
@@ -365,7 +358,7 @@ const CommunityHub = () => {
             isSidebarExpanded ? "block" : "hidden md:block"
           } mt-auto`}
         >
-          <div className="p-3 sm:p-4 rounded-lg bg-gradient-to-r from-green-500 to-emerald-500 text-white">
+          <div className="p-3 sm:p-4 rounded-lg bg-gradient-to-r from-green-800 to-emerald-800 text-white">
             <p className="text-xs sm:text-sm font-medium">Your Posts</p>
             <p className="text-lg sm:text-xl md:text-2xl font-bold">
               {userStats.posts}
@@ -379,7 +372,11 @@ const CommunityHub = () => {
       </motion.div>
 
       {/* Main Content */}
-      <div className="flex-1 p-3 sm:p-4 md:p-6 overflow-y-auto">
+      <div
+        className={`flex-1 p-3 sm:p-4 md:p-6 overflow-y-auto ${
+          isDarkMode ? "bg-gray-950" : "bg-white"
+        }`}
+      >
         <AnimatePresence mode="wait">
           {activeSection === "Discussions" && (
             <motion.div
@@ -390,7 +387,7 @@ const CommunityHub = () => {
               transition={{ duration: 0.5 }}
               className="space-y-4 sm:space-y-6 md:space-y-8"
             >
-              <h2 className="text-xl sm:text-2xl md:text-3xl font-bold text-gray-900 dark:text-white">
+              <h2 className="text-xl sm:text-2xl md:text-3xl font-bold text-gray-900 dark:text-gray-200">
                 Community Discussions
               </h2>
 
@@ -398,8 +395,8 @@ const CommunityHub = () => {
               <motion.div
                 className={`p-3 sm:p-4 md:p-6 rounded-xl ${
                   isDarkMode
-                    ? "bg-gray-800 border-gray-700"
-                    : "bg-white border-gray-200"
+                    ? "bg-gray-900 border-gray-800"
+                    : "bg-green-50 border-gray-200"
                 } border shadow-md hover:shadow-lg transition-shadow duration-300`}
               >
                 <div className="flex items-start gap-2 sm:gap-3 mb-4">
@@ -414,7 +411,7 @@ const CommunityHub = () => {
                     placeholder="Share your thoughts or ask a question..."
                     className={`flex-1 p-3 sm:p-4 rounded-lg border ${
                       isDarkMode
-                        ? "bg-gray-700 border-gray-600 text-white"
+                        ? "bg-gray-800 border-gray-700 text-gray-200"
                         : "bg-white border-gray-300 text-gray-900"
                     } focus:ring-2 focus:ring-green-500 focus:border-transparent resize-none h-20 sm:h-24 text-sm sm:text-base`}
                   />
@@ -460,7 +457,7 @@ const CommunityHub = () => {
                     onClick={() => fileInputRef.current.click()}
                     className={`p-2 rounded-lg ${
                       isDarkMode
-                        ? "bg-gray-700 hover:bg-gray-600"
+                        ? "bg-gray-800 hover:bg-gray-700"
                         : "bg-gray-200 hover:bg-gray-300"
                     } transition-all duration-300`}
                   >
@@ -472,7 +469,7 @@ const CommunityHub = () => {
                     onClick={() => fileInputRef.current.click()}
                     className={`p-2 rounded-lg ${
                       isDarkMode
-                        ? "bg-gray-700 hover:bg-gray-600"
+                        ? "bg-gray-800 hover:bg-gray-700"
                         : "bg-gray-200 hover:bg-gray-300"
                     } transition-all duration-300`}
                   >
@@ -484,7 +481,7 @@ const CommunityHub = () => {
                     onClick={() => fileInputRef.current.click()}
                     className={`p-2 rounded-lg ${
                       isDarkMode
-                        ? "bg-gray-700 hover:bg-gray-600"
+                        ? "bg-gray-800 hover:bg-gray-700"
                         : "bg-gray-200 hover:bg-gray-300"
                     } transition-all duration-300`}
                   >
@@ -496,7 +493,7 @@ const CommunityHub = () => {
                     onClick={() => setShowEmojiPicker((prev) => !prev)}
                     className={`p-2 rounded-lg ${
                       isDarkMode
-                        ? "bg-gray-700 hover:bg-gray-600"
+                        ? "bg-gray-800 hover:bg-gray-700"
                         : "bg-gray-200 hover:bg-gray-300"
                     } transition-all duration-300`}
                   >
@@ -541,8 +538,8 @@ const CommunityHub = () => {
                     key={discussion.id}
                     className={`p-3 sm:p-4 md:p-6 rounded-xl ${
                       isDarkMode
-                        ? "bg-gray-800 border-gray-700"
-                        : "bg-white border-gray-200"
+                        ? "bg-gray-900 border-gray-800"
+                        : "bg-green-50 border-gray-200"
                     } border shadow-md hover:shadow-lg transition-shadow duration-300`}
                     whileHover={{ scale: 1.02 }}
                   >
@@ -553,10 +550,10 @@ const CommunityHub = () => {
                         className="w-8 h-8 sm:w-10 sm:h-10 rounded-full"
                       />
                       <div className="flex-1">
-                        <p className="font-medium text-gray-900 dark:text-white text-sm sm:text-base">
+                        <p className="font-medium text-gray-900 dark:text-gray-200 text-sm sm:text-base">
                           {discussion.user}
                         </p>
-                        <p className="text-gray-600 dark:text-gray-400 text-sm sm:text-base">
+                        <p className="text-gray-600 dark:text-gray-300 text-sm sm:text-base">
                           {discussion.content}
                         </p>
                         {discussion.media && (
@@ -594,7 +591,7 @@ const CommunityHub = () => {
                         whileHover={{ scale: 1.1 }}
                         whileTap={{ scale: 0.9 }}
                         onClick={() => handleLikeDiscussion(discussion.id)}
-                        className="flex items-center gap-1 text-gray-600 dark:text-gray-400 hover:text-red-500 dark:hover:text-red-400"
+                        className="flex items-center gap-1 text-gray-600 dark:text-gray-300 hover:text-red-500 dark:hover:text-red-400"
                       >
                         <Heart className="w-4 sm:w-5 h-4 sm:h-5" />
                         <span className="text-sm sm:text-base">
@@ -609,7 +606,7 @@ const CommunityHub = () => {
                         <div
                           key={comment.id}
                           className={`p-3 rounded-lg ${
-                            isDarkMode ? "bg-gray-700" : "bg-gray-100"
+                            isDarkMode ? "bg-gray-800" : "bg-gray-200"
                           } flex items-start gap-2`}
                         >
                           <img
@@ -618,10 +615,10 @@ const CommunityHub = () => {
                             className="w-6 h-6 sm:w-8 sm:h-8 rounded-full"
                           />
                           <div>
-                            <p className="text-sm font-medium text-gray-900 dark:text-white">
+                            <p className="text-sm font-medium text-gray-900 dark:text-gray-200">
                               {comment.user}
                             </p>
-                            <p className="text-sm text-gray-600 dark:text-gray-400">
+                            <p className="text-sm text-gray-600 dark:text-gray-300">
                               {comment.content}
                             </p>
                           </div>
@@ -641,8 +638,8 @@ const CommunityHub = () => {
                           placeholder="Add a comment..."
                           className={`flex-1 p-2 rounded-lg border text-sm ${
                             isDarkMode
-                              ? "bg-gray-700 border-gray-600 text-white"
-                              : "bg-white border-gray-300 text-gray-900"
+                              ? "bg-gray-800 border-gray-700 text-gray-200"
+                              : "bg-gray-50 border-gray-300 text-gray-900"
                           } focus:ring-2 focus:ring-green-500 focus:border-transparent`}
                         />
                         <motion.button
@@ -674,7 +671,7 @@ const CommunityHub = () => {
               transition={{ duration: 0.5 }}
               className="space-y-4 sm:space-y-6 md:space-y-8"
             >
-              <h2 className="text-xl sm:text-2xl md:text-3xl font-bold text-gray-900 dark:text-white">
+              <h2 className="text-xl sm:text-2xl md:text-3xl font-bold text-gray-900 dark:text-gray-200">
                 Community Events
               </h2>
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4 md:gap-6">
@@ -683,21 +680,21 @@ const CommunityHub = () => {
                     key={event.id}
                     className={`p-3 sm:p-4 md:p-6 rounded-xl ${
                       isDarkMode
-                        ? "bg-gray-800 border-gray-700"
-                        : "bg-white border-gray-200"
+                        ? "bg-gray-900 border-gray-800"
+                        : "bg-green-50 border-gray-200"
                     } border shadow-md hover:shadow-lg transition-shadow duration-300`}
                     whileHover={{ scale: 1.02 }}
                   >
                     <div className="flex items-center gap-2 sm:gap-3 mb-4">
                       <Calendar className="w-5 sm:w-6 h-5 sm:h-6 text-blue-500 animate-pulse-slow" />
-                      <h3 className="text-base sm:text-lg font-semibold text-gray-900 dark:text-white">
+                      <h3 className="text-base sm:text-lg font-semibold text-gray-900 dark:text-gray-200">
                         {event.title}
                       </h3>
                     </div>
-                    <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-400 mb-2">
+                    <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-300 mb-2">
                       {event.date} at {event.time}
                     </p>
-                    <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-400 mb-4">
+                    <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-300 mb-4">
                       {event.description}
                     </p>
                     <motion.button
@@ -721,6 +718,7 @@ const CommunityHub = () => {
             </motion.div>
           )}
 
+          {/* Eco-Tips Section */}
           {activeSection === "Eco-Tips" && (
             <motion.div
               key="eco-tips"
@@ -730,7 +728,7 @@ const CommunityHub = () => {
               transition={{ duration: 0.5 }}
               className="space-y-4 sm:space-y-6 md:space-y-8"
             >
-              <h2 className="text-xl sm:text-2xl md:text-3xl font-bold text-gray-900 dark:text-white">
+              <h2 className="text-xl sm:text-2xl md:text-3xl font-bold text-gray-900 dark:text-gray-200">
                 Eco-Tips
               </h2>
 
@@ -738,8 +736,8 @@ const CommunityHub = () => {
               <motion.div
                 className={`p-3 sm:p-4 md:p-6 rounded-xl ${
                   isDarkMode
-                    ? "bg-gray-800 border-gray-700"
-                    : "bg-white border-gray-200"
+                    ? "bg-gray-900 border-gray-800"
+                    : "bg-green-50 border-gray-200"
                 } border shadow-md hover:shadow-lg transition-shadow duration-300`}
               >
                 <div className="flex items-start gap-2 sm:gap-3 mb-4">
@@ -754,7 +752,7 @@ const CommunityHub = () => {
                     placeholder="Share an eco-tip with the community..."
                     className={`flex-1 p-3 sm:p-4 rounded-lg border ${
                       isDarkMode
-                        ? "bg-gray-700 border-gray-600 text-white"
+                        ? "bg-gray-800 border-gray-700 text-gray-200"
                         : "bg-white border-gray-300 text-gray-900"
                     } focus:ring-2 focus:ring-green-500 focus:border-transparent resize-none h-20 sm:h-24 text-sm sm:text-base`}
                   />
@@ -800,7 +798,7 @@ const CommunityHub = () => {
                     onClick={() => fileInputRef.current.click()}
                     className={`p-2 rounded-lg ${
                       isDarkMode
-                        ? "bg-gray-700 hover:bg-gray-600"
+                        ? "bg-gray-800 hover:bg-gray-700"
                         : "bg-gray-200 hover:bg-gray-300"
                     } transition-all duration-300`}
                   >
@@ -812,7 +810,7 @@ const CommunityHub = () => {
                     onClick={() => fileInputRef.current.click()}
                     className={`p-2 rounded-lg ${
                       isDarkMode
-                        ? "bg-gray-700 hover:bg-gray-600"
+                        ? "bg-gray-800 hover:bg-gray-700"
                         : "bg-gray-200 hover:bg-gray-300"
                     } transition-all duration-300`}
                   >
@@ -824,7 +822,7 @@ const CommunityHub = () => {
                     onClick={() => fileInputRef.current.click()}
                     className={`p-2 rounded-lg ${
                       isDarkMode
-                        ? "bg-gray-700 hover:bg-gray-600"
+                        ? "bg-gray-800 hover:bg-gray-700"
                         : "bg-gray-200 hover:bg-gray-300"
                     } transition-all duration-300`}
                   >
@@ -836,7 +834,7 @@ const CommunityHub = () => {
                     onClick={() => setShowEmojiPicker((prev) => !prev)}
                     className={`p-2 rounded-lg ${
                       isDarkMode
-                        ? "bg-gray-700 hover:bg-gray-600"
+                        ? "bg-gray-800 hover:bg-gray-700"
                         : "bg-gray-200 hover:bg-gray-300"
                     } transition-all duration-300`}
                   >
@@ -881,8 +879,8 @@ const CommunityHub = () => {
                     key={tip.id}
                     className={`p-3 sm:p-4 md:p-6 rounded-xl ${
                       isDarkMode
-                        ? "bg-gray-800 border-gray-700"
-                        : "bg-white border-gray-200"
+                        ? "bg-gray-900 border-gray-800"
+                        : "bg-green-50 border-gray-200"
                     } border shadow-md hover:shadow-lg transition-shadow duration-300`}
                     whileHover={{ scale: 1.02 }}
                   >
@@ -893,10 +891,10 @@ const CommunityHub = () => {
                         className="w-8 h-8 sm:w-10 sm:h-10 rounded-full"
                       />
                       <div className="flex-1">
-                        <p className="font-medium text-gray-900 dark:text-white text-sm sm:text-base">
+                        <p className="font-medium text-gray-900 dark:text-gray-200 text-sm sm:text-base">
                           {tip.user}
                         </p>
-                        <p className="text-gray-600 dark:text-gray-400 text-sm sm:text-base">
+                        <p className="text-gray-600 dark:text-gray-300 text-sm sm:text-base">
                           {tip.content}
                         </p>
                         {tip.media && (
@@ -934,7 +932,7 @@ const CommunityHub = () => {
                         whileHover={{ scale: 1.1 }}
                         whileTap={{ scale: 0.9 }}
                         onClick={() => handleLikeEcoTip(tip.id)}
-                        className="flex items-center gap-1 text-gray-600 dark:text-gray-400 hover:text-red-500 dark:hover:text-red-400"
+                        className="flex items-center gap-1 text-gray-600 dark:text-gray-300 hover:text-red-500 dark:hover:text-red-400"
                       >
                         <Heart className="w-4 sm:w-5 h-4 sm:h-5" />
                         <span className="text-sm sm:text-base">
@@ -945,7 +943,7 @@ const CommunityHub = () => {
                         whileHover={{ scale: 1.1 }}
                         whileTap={{ scale: 0.9 }}
                         onClick={() => handleShareEcoTip(tip.content)}
-                        className="flex items-center gap-1 text-gray-600 dark:text-gray-400 hover:text-blue-500 dark:hover:text-blue-400"
+                        className="flex items-center gap-1 text-gray-600 dark:text-gray-300 hover:text-blue-500 dark:hover:text-blue-400"
                       >
                         <Share2 className="w-4 sm:w-5 h-4 sm:h-5" />
                         <span className="text-sm sm:text-base">Share</span>
