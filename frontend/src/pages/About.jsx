@@ -3,7 +3,7 @@ import { motion } from "framer-motion";
 import { Leaf, Users, Globe, Zap, Sprout, Droplet } from "lucide-react";
 import { useTheme } from "next-themes";
 
-// Animation Variants
+
 const fadeInUp = {
   initial: { opacity: 0, y: 20 },
   animate: { opacity: 1, y: 0 },
