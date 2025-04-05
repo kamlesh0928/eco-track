@@ -1,6 +1,6 @@
 # EcoTrack
 
-**Demo Video:** [https://youtube.com/watch?v=-84JUppFPnQ&feature=shared](https://youtube.com/watch?v=-84JUppFPnQ&feature=shared)
+**Demo Video:** [https://www.youtube.com/watch?v=td2A6CFL5fk](https://www.youtube.com/watch?v=td2A6CFL5fk)
 
 **MVP Link:** [https://eco-track-sg2k.onrender.com](https://eco-track-sg2k.onrender.com)
 
