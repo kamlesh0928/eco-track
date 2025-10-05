@@ -1,8 +1,8 @@
 # EcoTrack
 
-**Demo Video:** [https://youtu.be/hcEoqiVTJ30?si=3o-qGTqW2hBB81mf](https://youtu.be/hcEoqiVTJ30?si=3o-qGTqW2hBB81mf)
+**Demo Video:** []()
 
-**MVP Link:** [https://riwaayat-artisan-marketplace.onrender.com/](https://riwaayat-artisan-marketplace.onrender.com/)
+**MVP Link:** []()
 
 ## Table of Contents
 
